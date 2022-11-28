@@ -37,6 +37,6 @@ class QuestionDaoCsvTest {
 
         var questionDao = new QuestionDaoCsv(CSV_RESOURCE_NAME);
 
-        assertThat(questionDao.findAll()).containsAll(expectedQuestions);
+        assertThat(questionDao.findAll()).containsExactlyElementsOf(expectedQuestions);
     }
 }
