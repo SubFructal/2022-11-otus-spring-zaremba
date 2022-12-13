@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
+import ru.otus.homework.exceptions.QuestionsNotLoadedFromCsvSourceException;
 
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class QuestionDaoCsv implements QuestionDao {
             }
             return questions;
         } catch (Exception e) {
-            throw new RuntimeException("Error file reading", e);
+            throw new QuestionsNotLoadedFromCsvSourceException(e);
         }
     }
 }

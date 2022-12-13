@@ -17,17 +17,20 @@ public class AppRunnerImpl implements AppRunner {
     private final QuestionService questionService;
     private final OutputPreparerService outputPreparer;
     private final UserService userService;
+    private final TestResultConverter testResultConverter;
     private final int scoreToPass;
 
     public AppRunnerImpl(IOService ioService,
                          QuestionService questionService,
                          OutputPreparerService outputPreparer,
                          UserService userService,
+                         TestResultConverter testResultConverter,
                          @Value("${score.to.pass}") int scoreToPass) {
         this.ioService = ioService;
         this.questionService = questionService;
         this.outputPreparer = outputPreparer;
         this.userService = userService;
+        this.testResultConverter = testResultConverter;
         this.scoreToPass = scoreToPass;
     }
 
@@ -36,7 +39,7 @@ public class AppRunnerImpl implements AppRunner {
         ioService.output(MSG_HEADER);
         ioService.output(HEADER_DELIMITER);
         var user = userService.getUser();
-        var testResult = new TestResult(user, scoreToPass);
+        var testResult = new TestResult(user);
 
         var questions = questionService.getAllQuestions();
         questions.forEach(question -> {
@@ -45,6 +48,6 @@ public class AppRunnerImpl implements AppRunner {
             testResult.incrementAnswers(isRight);
             ioService.output(isRight ? MSG_RIGHT_ANSWER : MSG_WRONG_ANSWER);
         });
-        ioService.output(testResult.toString());
+        ioService.output(testResultConverter.convertTestResultToString(testResult, scoreToPass));
     }
 }
