@@ -2,7 +2,7 @@ package ru.otus.homework.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.otus.homework.configs.ApplicationPropertiesProvider;
+import ru.otus.homework.configs.ScoreToPassProvider;
 import ru.otus.homework.domain.TestResult;
 
 @Service
@@ -16,7 +16,7 @@ public class AppRunnerImpl implements AppRunner {
     private final OutputPreparerService outputPreparer;
     private final UserService userService;
     private final TestResultConverter testResultConverter;
-    private final ApplicationPropertiesProvider propertiesProvider;
+    private final ScoreToPassProvider propertiesProvider;
     private final LocalizationMessageService messageService;
 
     @Override

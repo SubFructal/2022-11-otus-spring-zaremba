@@ -1,6 +1,5 @@
 package ru.otus.homework.configs;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -9,8 +8,7 @@ import java.util.Locale;
 
 @ConfigurationProperties(prefix = "app.properties")
 @RequiredArgsConstructor
-@Getter
-public class AppProperties implements ApplicationLocaleProvider, ApplicationPropertiesProvider {
+public class AppProperties implements LocaleProvider, ScoreToPassProvider, LocalizedCsvResourceNameProvider {
 
     private final String csvResourceName;
     private final int scoreToPass;
@@ -24,5 +22,10 @@ public class AppProperties implements ApplicationLocaleProvider, ApplicationProp
     @Override
     public int getScoreToPass() {
         return scoreToPass;
+    }
+
+    @Override
+    public String getLocalizedCsvResourceName() {
+        return locale.toString() + "_" + csvResourceName;
     }
 }

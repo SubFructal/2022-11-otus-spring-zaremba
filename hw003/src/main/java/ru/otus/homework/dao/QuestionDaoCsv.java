@@ -2,9 +2,8 @@ package ru.otus.homework.dao;
 
 import com.opencsv.CSVReader;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
-import ru.otus.homework.configs.AppProperties;
+import ru.otus.homework.configs.LocalizedCsvResourceNameProvider;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 import ru.otus.homework.exceptions.QuestionsNotLoadedFromCsvSourceException;
@@ -19,15 +18,14 @@ import java.util.Objects;
 public class QuestionDaoCsv implements QuestionDao {
 
     private static final String IS_RIGHT = "true";
-    private final AppProperties appProperties;
-    private final MessageSource messageSource;
+    private final LocalizedCsvResourceNameProvider resourceNameProvider;
 
     @Override
     public List<Question> findAll() {
-        var csvResourceNameLocalized = getCsvResourceNameLocalized(messageSource, appProperties);
+        var csvResourceName = resourceNameProvider.getLocalizedCsvResourceName();
 
         try (var reader = new CSVReader(new InputStreamReader(Objects.requireNonNull(this.getClass().getClassLoader().
-                getResourceAsStream(csvResourceNameLocalized), "File not found")))) {
+                getResourceAsStream(csvResourceName), "File not found")))) {
             var content = reader.readAll();
             var questions = new ArrayList<Question>();
             for (var row : content) {
@@ -41,11 +39,5 @@ public class QuestionDaoCsv implements QuestionDao {
         } catch (Exception e) {
             throw new QuestionsNotLoadedFromCsvSourceException(e);
         }
-    }
-
-    private String getCsvResourceNameLocalized(MessageSource messageSource,
-                                               AppProperties appProperties) {
-        return messageSource.getMessage("localization.name",
-                new String[]{appProperties.getCsvResourceName()}, appProperties.getLocale());
     }
 }

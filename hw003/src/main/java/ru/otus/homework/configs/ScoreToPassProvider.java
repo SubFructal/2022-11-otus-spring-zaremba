@@ -1,5 +1,5 @@
 package ru.otus.homework.configs;
 
-public interface ApplicationPropertiesProvider {
+public interface ScoreToPassProvider {
     int getScoreToPass();
 }

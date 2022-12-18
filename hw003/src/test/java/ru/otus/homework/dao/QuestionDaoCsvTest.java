@@ -6,8 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.MessageSource;
-import ru.otus.homework.configs.AppProperties;
+import ru.otus.homework.configs.LocalizedCsvResourceNameProvider;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("Класс QuestionDaoCsv")
@@ -24,10 +22,7 @@ class QuestionDaoCsvTest {
     private static final String CSV_RESOURCE_NAME = "testQuestions.csv";
 
     @Mock
-    private AppProperties appProperties;
-
-    @Mock
-    private MessageSource messageSource;
+    private LocalizedCsvResourceNameProvider resourceNameProvider;
 
     @InjectMocks
     private QuestionDaoCsv questionDao;
@@ -52,7 +47,7 @@ class QuestionDaoCsvTest {
                 new Answer("answer33", false)
         )));
 
-        given(messageSource.getMessage(any(), any(), any())).willReturn(CSV_RESOURCE_NAME);
+        given(resourceNameProvider.getLocalizedCsvResourceName()).willReturn(CSV_RESOURCE_NAME);
 
         assertThat(questionDao.findAll())
                 .usingRecursiveFieldByFieldElementComparator()
