@@ -1,0 +1,10 @@
+spring:
+  messages:
+    basename: "appmessages"
+    encoding: "UTF-8"
+
+app:
+  properties:
+    csv-resource-name: "questions.csv"
+    score-to-pass: 4
+    locale: ru_RU
