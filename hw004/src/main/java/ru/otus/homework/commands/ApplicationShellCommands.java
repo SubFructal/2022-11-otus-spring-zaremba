@@ -10,8 +10,6 @@ import ru.otus.homework.services.AppRunner;
 import ru.otus.homework.services.IOService;
 import ru.otus.homework.services.LocalizationMessageService;
 
-import java.util.Optional;
-
 @ShellComponent
 @RequiredArgsConstructor
 public class ApplicationShellCommands {
@@ -21,13 +19,13 @@ public class ApplicationShellCommands {
     private final LocalizationMessageService messageService;
     private final AppRunner appRunner;
     private final IOService ioService;
-    private Optional<String> userAnswer = Optional.empty();
+
+    private boolean isAgree = false;
 
     @ShellMethod(value = "User agree to testing (y/n)", key = {"agree", "agree-to-testing"})
     public void agreeToTesting(@ShellOption(defaultValue = "y") String userAnswer) {
-        this.userAnswer = Optional.of(userAnswer);
-        ioService.output(this.userAnswer.orElse("n").equalsIgnoreCase(AGREEMENT) ?
-                messageService.getLocalizedMessage("confirmation.of.agreement") :
+        this.isAgree = userAnswer.equalsIgnoreCase(AGREEMENT);
+        ioService.output(isAgree ? messageService.getLocalizedMessage("confirmation.of.agreement") :
                 messageService.getLocalizedMessage("confirmation.of.disagreement"));
     }
 
@@ -39,8 +37,7 @@ public class ApplicationShellCommands {
     }
 
     private Availability isAgreementToTestingReceived() {
-        return userAnswer.orElse("n").equalsIgnoreCase(AGREEMENT) ?
-                Availability.available() :
+        return isAgree ? Availability.available() :
                 Availability.unavailable(messageService.getLocalizedMessage("confirmation.consent"));
     }
 }
