@@ -241,7 +241,11 @@ class BookServiceImplTest {
 
         given(bookRepository.getById(EXISTING_BOOK_ID)).willReturn(Optional.of(expectedBook));
 
-        bookService.deleteBookById(EXISTING_BOOK_ID);
+        var actualBook = bookService.deleteBookById(EXISTING_BOOK_ID);
+
+        assertThat(actualBook)
+                .usingRecursiveComparison()
+                .isEqualTo(expectedBook);
         verify(bookRepository, times(1)).deleteById(EXISTING_BOOK_ID);
     }
 
