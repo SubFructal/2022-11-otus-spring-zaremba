@@ -125,7 +125,7 @@ class GenreRepositoryJdbcTest {
         var actualCountBeforeCleaning = genreRepositoryJdbc.count();
         assertThat(actualCountBeforeCleaning).isEqualTo(EXPECTED_GENRES_COUNT);
 
-        genreRepositoryJdbc.clean();
+        genreRepositoryJdbc.deleteAll();
 
         var actualCountAfterCleaning = genreRepositoryJdbc.count();
         assertThat(actualCountAfterCleaning).isEqualTo(EXPECTED_GENRES_COUNT_AFTER_CLEANING);

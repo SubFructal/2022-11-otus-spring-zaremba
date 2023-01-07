@@ -126,7 +126,7 @@ class AuthorRepositoryJdbcTest {
         var actualCountBeforeCleaning = authorRepositoryJdbc.count();
         assertThat(actualCountBeforeCleaning).isEqualTo(EXPECTED_AUTHORS_COUNT);
 
-        authorRepositoryJdbc.clean();
+        authorRepositoryJdbc.deleteAll();
 
         var actualCountAfterCleaning = authorRepositoryJdbc.count();
         assertThat(actualCountAfterCleaning).isEqualTo(EXPECTED_AUTHORS_COUNT_AFTER_CLEANING);

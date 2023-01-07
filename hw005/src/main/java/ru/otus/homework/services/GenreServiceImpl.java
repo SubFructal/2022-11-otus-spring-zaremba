@@ -60,6 +60,6 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public long deleteAllGenres() {
-        return genreRepository.clean();
+        return genreRepository.deleteAll();
     }
 }

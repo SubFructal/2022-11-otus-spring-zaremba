@@ -150,7 +150,7 @@ class BookRepositoryJdbcTest {
         var actualCountBeforeCleaning = bookRepositoryJdbc.count();
         assertThat(actualCountBeforeCleaning).isEqualTo(3);
 
-        bookRepositoryJdbc.clean();
+        bookRepositoryJdbc.deleteAll();
 
         var expectedCountAfterCleaning = 0;
         var actualCountAfterCleaning = bookRepositoryJdbc.count();

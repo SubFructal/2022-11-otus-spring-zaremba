@@ -20,5 +20,5 @@ public interface AuthorRepository {
 
     void deleteById(long id);
 
-    long clean();
+    long deleteAll();
 }

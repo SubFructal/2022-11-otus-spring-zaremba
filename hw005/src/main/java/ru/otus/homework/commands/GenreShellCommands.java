@@ -3,18 +3,19 @@ package ru.otus.homework.commands;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
-import ru.otus.homework.models.Genre;
 import ru.otus.homework.services.GenreService;
+import ru.otus.homework.services.converters.GenreToStringConverter;
 
 import java.util.stream.Collectors;
 
-import static java.lang.String.*;
+import static java.lang.String.format;
 
 @ShellComponent
 @RequiredArgsConstructor
 public class GenreShellCommands {
 
     private final GenreService genreService;
+    private final GenreToStringConverter converter;
 
     @ShellMethod(key = {"get-genres-count", "genres-count"},
             value = "Возвращает количество всех жанров в БД")
@@ -27,42 +28,42 @@ public class GenreShellCommands {
             value = "Добавляет новый жанр в БД: укажите название жанра")
     public String addNewGenre(String genreName) {
         var genre = genreService.addGenre(genreName);
-        return format("Добавлен новый жанр: %s", genre);
+        return format("Добавлен новый жанр: %s", converter.convertToString(genre));
     }
 
     @ShellMethod(key = {"change-genre"},
             value = "Изменяет существующий в БД жанр: укажите идентификатор жанра, название жанра")
     public String changeGenre(long id, String genreName) {
         var genre = genreService.changeGenre(id, genreName);
-        return format("Жанр изменен: %s", genre);
+        return format("Жанр изменен: %s", converter.convertToString(genre));
     }
 
     @ShellMethod(key = {"find-genre-by-id", "genre-by-id"},
             value = "Ищет жанр в БД по его идентификатору: укажите идентификатор жанра")
     public String findGenreById(long id) {
         var genre = genreService.findGenreById(id);
-        return format("Жанр найден: %s", genre);
+        return format("Жанр найден: %s", converter.convertToString(genre));
     }
 
     @ShellMethod(key = {"find-genre-by-name", "genre-by-name"},
             value = "Ищет жанр в БД по его названию: укажите название жанра")
     public String findGenreByName(String genreName) {
         var genre = genreService.findGenreByName(genreName);
-        return format("Жанр найден: %s", genre);
+        return format("Жанр найден: %s", converter.convertToString(genre));
     }
 
     @ShellMethod(key = {"show-all-genres", "all-genres"},
             value = "Выводит список всех жанров в БД")
     public String showAllGenres() {
         var genres = genreService.getAllGenres();
-        return genres.stream().map(Genre::toString).collect(Collectors.joining("\n"));
+        return genres.stream().map(converter::convertToString).collect(Collectors.joining("\n"));
     }
 
     @ShellMethod(key = {"delete-genre-from-db", "delete-genre"},
             value = "Удаляет жанр из БД по его идентификатору: укажите идентификатор жанра")
     public String deleteGenreFromDatabase(long id) {
         var genre = genreService.deleteGenreById(id);
-        return format("Жанр удален: %s", genre);
+        return format("Жанр удален: %s", converter.convertToString(genre));
     }
 
     @ShellMethod(key = {"delete-all-genres-from-db", "delete-all-genres"},

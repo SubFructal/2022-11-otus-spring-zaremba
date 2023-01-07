@@ -250,10 +250,10 @@ class BookServiceImplTest {
     @DisplayName("должен удалять все книги из БД")
     @Test
     void shouldDeleteAllBooks() {
-        given(bookRepository.clean()).willReturn(EXPECTED_DELETED_BOOKS_COUNT);
+        given(bookRepository.deleteAll()).willReturn(EXPECTED_DELETED_BOOKS_COUNT);
         var actualDeletedBooksCount = bookService.deleteAllBooks();
 
         assertThat(actualDeletedBooksCount).isEqualTo(EXPECTED_DELETED_BOOKS_COUNT);
-        verify(bookRepository, times(1)).clean();
+        verify(bookRepository, times(1)).deleteAll();
     }
 }

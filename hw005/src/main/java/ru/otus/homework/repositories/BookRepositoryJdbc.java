@@ -61,8 +61,7 @@ public class BookRepositoryJdbc implements BookRepository {
         var sql = "select books.id, books.title, books.author_id, authors.name, books.genre_id, genres.genre " +
                 "from books left join authors on books.author_id = authors.id " +
                 "left join genres on books.genre_id = genres.id where books.id = :id";
-        return Optional.ofNullable(jdbc.query(sql, Map.of("id", id),
-                rs -> rs.next() ? new BookRowMapper().mapRow(rs, 1) : null));
+        return jdbc.query(sql, Map.of("id", id), new BookRowMapper()).stream().findFirst();
     }
 
     @Override
@@ -95,7 +94,7 @@ public class BookRepositoryJdbc implements BookRepository {
     }
 
     @Override
-    public long clean() {
+    public long deleteAll() {
         return jdbc.getJdbcOperations().update("delete from books");
     }
 

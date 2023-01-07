@@ -45,15 +45,14 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
 
     @Override
     public Optional<Author> getById(long id) {
-        return Optional.ofNullable(jdbc.query("select id, name from authors where id = :id",
-                Map.of("id", id), rs -> rs.next() ? new AuthorRowMapper().mapRow(rs, 1) : null));
+        return jdbc.query("select id, name from authors where id = :id",
+                Map.of("id", id), new AuthorRowMapper()).stream().findFirst();
     }
 
     @Override
     public Optional<Author> getByName(String authorName) {
-        return Optional.ofNullable(jdbc.query("select id, name from authors where name = :authorName",
-                Map.of("authorName", authorName),
-                rs -> rs.next() ? new AuthorRowMapper().mapRow(rs, 1) : null));
+        return jdbc.query("select id, name from authors where name = :authorName",
+                Map.of("authorName", authorName), new AuthorRowMapper()).stream().findFirst();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
     }
 
     @Override
-    public long clean() {
+    public long deleteAll() {
         return jdbc.getJdbcOperations().update("delete from authors");
     }
 

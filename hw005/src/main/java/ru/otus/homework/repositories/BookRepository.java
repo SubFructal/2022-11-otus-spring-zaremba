@@ -22,5 +22,5 @@ public interface BookRepository {
 
     void deleteById(long id);
 
-    long clean();
+    long deleteAll();
 }

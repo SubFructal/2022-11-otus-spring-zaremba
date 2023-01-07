@@ -20,5 +20,5 @@ public interface GenreRepository {
 
     void deleteById(long id);
 
-    long clean();
+    long deleteAll();
 }

@@ -45,15 +45,14 @@ public class GenreRepositoryJdbc implements GenreRepository {
 
     @Override
     public Optional<Genre> getById(long id) {
-        return Optional.ofNullable(jdbc.query("select id, genre from genres where id = :id",
-                Map.of("id", id), rs -> rs.next() ? new GenreRowMapper().mapRow(rs, 1) : null));
+        return jdbc.query("select id, genre from genres where id = :id",
+                Map.of("id", id), new GenreRowMapper()).stream().findFirst();
     }
 
     @Override
     public Optional<Genre> getByName(String genreName) {
-        return Optional.ofNullable(jdbc.query("select id, genre from genres where genre = :genreName",
-                Map.of("genreName", genreName),
-                rs -> rs.next() ? new GenreRowMapper().mapRow(rs, 1) : null));
+        return jdbc.query("select id, genre from genres where genre = :genreName",
+                Map.of("genreName", genreName), new GenreRowMapper()).stream().findFirst();
     }
 
     @Override
@@ -67,7 +66,7 @@ public class GenreRepositoryJdbc implements GenreRepository {
     }
 
     @Override
-    public long clean() {
+    public long deleteAll() {
         return jdbc.getJdbcOperations().update("delete from genres");
     }
 

@@ -96,6 +96,6 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public long deleteAllBooks() {
-        return bookRepository.clean();
+        return bookRepository.deleteAll();
     }
 }

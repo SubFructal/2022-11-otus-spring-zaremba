@@ -60,7 +60,7 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public long deleteAllAuthors() {
-        return authorRepository.clean();
+        return authorRepository.deleteAll();
     }
 
 }
