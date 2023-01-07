@@ -3,9 +3,8 @@ package ru.otus.homework.services;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
@@ -19,8 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
 
 @DisplayName("Класс BookServiceImpl")
-@JdbcTest
-@Import(value = {BookServiceImpl.class})
+@SpringBootTest
 class BookServiceImplTest {
 
     private static final long EXPECTED_BOOKS_COUNT = 3;
