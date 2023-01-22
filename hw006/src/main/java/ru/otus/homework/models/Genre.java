@@ -1,15 +1,18 @@
 package ru.otus.homework.models;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "genres")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Genre {
@@ -24,4 +27,16 @@ public class Genre {
             cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "genre")
     private List<Book> books;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Genre genre = (Genre) o;
+        return id == genre.id && genreName.equals(genre.genreName) && Objects.equals(books, genre.books);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, genreName, books);
+    }
 }

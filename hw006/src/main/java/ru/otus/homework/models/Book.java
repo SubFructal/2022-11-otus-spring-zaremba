@@ -1,17 +1,17 @@
 package ru.otus.homework.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "books")
 @NamedEntityGraph(name = "genre-author-entity-graph",
         attributeNodes = {@NamedAttributeNode("genre"), @NamedAttributeNode("author")})
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Book {
@@ -22,11 +22,11 @@ public class Book {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @ManyToOne(targetEntity = Genre.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Genre.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "genre_id", referencedColumnName = "id")
     private Genre genre;
 
-    @ManyToOne(targetEntity = Author.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = Author.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private Author author;
 
@@ -34,4 +34,16 @@ public class Book {
             cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "book")
     private List<Comment> comments;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id == book.id && title.equals(book.title) && genre.equals(book.genre) && author.equals(book.author) && Objects.equals(comments, book.comments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, genre, author, comments);
+    }
 }
