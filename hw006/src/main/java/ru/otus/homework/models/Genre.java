@@ -32,11 +32,11 @@ public class Genre {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Genre genre = (Genre) o;
-        return id == genre.id && genreName.equals(genre.genreName) && Objects.equals(books, genre.books);
+        return id == genre.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, genreName, books);
+        return Objects.hash(id);
     }
 }

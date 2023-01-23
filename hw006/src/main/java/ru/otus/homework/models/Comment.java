@@ -28,11 +28,11 @@ public class Comment {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Comment comment = (Comment) o;
-        return id == comment.id && commentText.equals(comment.commentText) && book.equals(comment.book);
+        return id == comment.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, commentText, book);
+        return Objects.hash(id);
     }
 }

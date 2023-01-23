@@ -54,6 +54,7 @@ public class BookShellCommands {
         return format("Книга изменена: %s", converter.convertToString(book));
     }
 
+    @Transactional
     @ShellMethod(key = {"find-book-by-id", "book-by-id"},
             value = "Ищет книгу в БД по ее идентификатору: укажите идентификатор книги")
     public String findBookById(long id) {
@@ -84,6 +85,7 @@ public class BookShellCommands {
         return books.stream().map(converter::convertToString).collect(Collectors.joining("\n"));
     }
 
+    @Transactional
     @ShellMethod(key = {"delete-book-from-db", "delete-book"},
             value = "Удаляет книгу из БД по ее идентификатору: укажите идентификатор книги")
     public String deleteBookFromDatabase(long id) {
