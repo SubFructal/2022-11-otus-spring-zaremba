@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -55,8 +52,7 @@ class GenreRepositoryJpaTest {
 
         assertThat(actualGenre)
                 .matches(genre -> genre.getId() == 3)
-                .matches(genre -> genre.getGenreName().equals(NEW_GENRE_NAME))
-                .matches(genre -> genre.getBooks() == null);
+                .matches(genre -> genre.getGenreName().equals(NEW_GENRE_NAME));
     }
 
     @DisplayName("должен изменять имеющийся в БД жанр без отключения объекта жанра от контекста")
@@ -115,7 +111,6 @@ class GenreRepositoryJpaTest {
 
         assertThat(genres).isNotNull().hasSize(EXPECTED_GENRES_COUNT)
                 .allMatch(genre -> !genre.getGenreName().equals(""))
-                .allMatch(genre -> genre.getBooks() != null)
                 .containsOnlyOnce(testEntityManager.find(Genre.class, EXISTING_GENRE_ID));
     }
 

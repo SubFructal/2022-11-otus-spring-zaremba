@@ -1,7 +1,6 @@
 package ru.otus.homework.services;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.models.Book;
@@ -90,14 +89,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> findAllBooksByGenre(String genreName) {
         var genre = genreService.findGenreByName(genreName);
-        return genre.getBooks();
+        return bookRepository.getAllForSomeGenre(genre);
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Book> findAllBooksByAuthor(String authorName) {
         var author = authorService.findAuthorByName(authorName);
-        return author.getBooks();
+        return bookRepository.getAllForSomeAuthor(author);
     }
 
     @Transactional

@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,10 +21,6 @@ public class Genre {
 
     @Column(name = "genre", nullable = false, unique = true)
     private String genreName;
-
-    @OneToMany(targetEntity = Book.class, orphanRemoval = true,
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "genre")
-    private List<Book> books;
 
     @Override
     public boolean equals(Object o) {

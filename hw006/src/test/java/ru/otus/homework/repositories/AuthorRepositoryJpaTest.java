@@ -7,10 +7,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import ru.otus.homework.models.Author;
-import ru.otus.homework.models.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Класс AuthorRepositoryJpa")
 @DataJpaTest
@@ -54,8 +52,7 @@ class AuthorRepositoryJpaTest {
 
         assertThat(actualAuthor)
                 .matches(author -> author.getId() == 4)
-                .matches(author -> author.getName().equals(NEW_AUTHOR_NAME))
-                .matches(author -> author.getBooks() == null);
+                .matches(author -> author.getName().equals(NEW_AUTHOR_NAME));
     }
 
     @DisplayName("должен изменять имеющегося в БД автора без отключения объекта автора от контекста")
@@ -114,7 +111,6 @@ class AuthorRepositoryJpaTest {
 
         assertThat(authors).isNotNull().hasSize(EXPECTED_AUTHORS_COUNT)
                 .allMatch(author -> !author.getName().equals(""))
-                .allMatch(author -> author.getBooks() != null)
                 .containsOnlyOnce(testEntityManager.find(Author.class, EXISTING_AUTHOR_ID));
     }
 

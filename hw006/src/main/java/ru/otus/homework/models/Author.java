@@ -1,9 +1,11 @@
 package ru.otus.homework.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,10 +21,6 @@ public class Author {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
-
-    @OneToMany(targetEntity = Book.class, orphanRemoval = true,
-            cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author")
-    private List<Book> books;
 
     @Override
     public boolean equals(Object o) {

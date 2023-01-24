@@ -3,7 +3,6 @@ package ru.otus.homework.commands;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.services.BookService;
 import ru.otus.homework.services.converters.BookToStringConverter;
 
@@ -54,7 +53,6 @@ public class BookShellCommands {
         return format("Книга изменена: %s", converter.convertToString(book));
     }
 
-    @Transactional
     @ShellMethod(key = {"find-book-by-id", "book-by-id"},
             value = "Ищет книгу в БД по ее идентификатору: укажите идентификатор книги")
     public String findBookById(long id) {
@@ -69,7 +67,6 @@ public class BookShellCommands {
         return books.stream().map(converter::convertToString).collect(Collectors.joining("\n"));
     }
 
-    @Transactional(readOnly = true)
     @ShellMethod(key = {"show-books-by-genre", "books-by-genre"},
             value = "Выводит список всех книг определенного жанра: укажите жанр")
     public String showAllBooksByGenre(String genreName) {
@@ -77,7 +74,6 @@ public class BookShellCommands {
         return books.stream().map(converter::convertToString).collect(Collectors.joining("\n"));
     }
 
-    @Transactional(readOnly = true)
     @ShellMethod(key = {"show-books-by-author", "books-by-author"},
             value = "Выводит список всех книг определенного автора: укажите имя автора")
     public String showAllBooksByAuthor(String authorName) {
@@ -85,7 +81,6 @@ public class BookShellCommands {
         return books.stream().map(converter::convertToString).collect(Collectors.joining("\n"));
     }
 
-    @Transactional
     @ShellMethod(key = {"delete-book-from-db", "delete-book"},
             value = "Удаляет книгу из БД по ее идентификатору: укажите идентификатор книги")
     public String deleteBookFromDatabase(long id) {

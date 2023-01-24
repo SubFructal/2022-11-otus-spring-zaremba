@@ -10,8 +10,6 @@ import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Comment;
 import ru.otus.homework.models.Genre;
 
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Класс CommentRepositoryJpa")

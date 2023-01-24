@@ -3,7 +3,6 @@ package ru.otus.homework.commands;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
-import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.services.CommentService;
 import ru.otus.homework.services.converters.CommentToStringConverter;
 
@@ -36,10 +35,9 @@ public class CommentsShellCommands {
             value = "Ищет комментарий к книге по его идентификатору: укажите идентификатор комментария")
     public String findCommentById(long id) {
         var comment = commentService.findCommentById(id);
-        return format(" Комментарий найден: %s", converter.convertToString(comment));
+        return format("Комментарий найден: %s", converter.convertToString(comment));
     }
 
-    @Transactional(readOnly = true)
     @ShellMethod(key = {"show-all-comments-for-book", "comments-for-book"},
             value = "Выводит список всех комментариев к определенной книге: укажите идентификатор книги")
     public String showAllCommentsForBook(long bookId) {

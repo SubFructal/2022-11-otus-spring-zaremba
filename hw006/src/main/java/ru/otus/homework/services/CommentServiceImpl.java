@@ -46,7 +46,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<Comment> findAllCommentsForSpecificBook(long bookId) {
         var book = bookService.findBookById(bookId);
-        return book.getComments();
+        return commentRepository.getAllForSomeBook(book);
     }
 
     @Transactional

@@ -10,8 +10,6 @@ import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
 
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Класс BookRepositoryJpa")
@@ -113,7 +111,6 @@ class BookRepositoryJpaTest {
                 .allMatch(book -> !book.getTitle().equals(""))
                 .allMatch(book -> book.getGenre() != null)
                 .allMatch(book -> book.getAuthor() != null)
-                .allMatch(book -> book.getComments() != null)
                 .containsOnlyOnce(testEntityManager.find(Book.class, EXISTING_BOOK_ID));
     }
 
