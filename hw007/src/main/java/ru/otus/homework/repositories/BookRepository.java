@@ -1,5 +1,6 @@
 package ru.otus.homework.repositories;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.otus.homework.models.Author;
@@ -15,11 +16,11 @@ public interface BookRepository extends JpaRepository<Book, Long>, BookRepositor
 
     @Override
     @EntityGraph(value = "genre-author-entity-graph")
-    List<Book> findAll();
+    List<Book> findAll(Sort sort);
 
-    @EntityGraph(value = "genre-author-entity-graph")
+    @EntityGraph(attributePaths = {"author"})
     List<Book> findAllByGenre(Genre genre);
 
-    @EntityGraph(value = "genre-author-entity-graph")
+    @EntityGraph(attributePaths = {"genre"})
     List<Book> findAllByAuthor(Author author);
 }

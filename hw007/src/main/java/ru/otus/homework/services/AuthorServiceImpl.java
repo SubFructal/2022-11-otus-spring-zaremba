@@ -1,6 +1,7 @@
 package ru.otus.homework.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.models.Author;
@@ -55,7 +56,7 @@ public class AuthorServiceImpl implements AuthorService {
     @Transactional(readOnly = true)
     @Override
     public List<Author> getAllAuthors() {
-        return authorRepository.findAll();
+        return authorRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
     }
 
     @Transactional

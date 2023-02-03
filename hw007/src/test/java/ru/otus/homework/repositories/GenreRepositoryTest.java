@@ -7,7 +7,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import ru.otus.homework.models.Author;
+import org.springframework.data.domain.Sort;
 import ru.otus.homework.models.Genre;
 
 import java.util.List;
@@ -115,7 +115,7 @@ class GenreRepositoryTest {
                 testEntityManager.find(Genre.class, 1L),
                 testEntityManager.find(Genre.class, 2L)
         );
-        var actualGenres = genreRepository.findAll();
+        var actualGenres = genreRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         assertThat(actualGenres).isNotNull().hasSize(EXPECTED_GENRES_COUNT)
                 .usingRecursiveFieldByFieldElementComparator()

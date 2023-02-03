@@ -1,6 +1,7 @@
 package ru.otus.homework.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.models.Genre;
@@ -55,7 +56,7 @@ public class GenreServiceImpl implements GenreService {
     @Transactional(readOnly = true)
     @Override
     public List<Genre> getAllGenres() {
-        return genreRepository.findAll();
+        return genreRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @Transactional

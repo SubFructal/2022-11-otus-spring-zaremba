@@ -7,6 +7,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Sort;
 import ru.otus.homework.models.Author;
 
 import java.util.List;
@@ -115,7 +116,7 @@ class AuthorRepositoryTest {
                 testEntityManager.find(Author.class, 2L),
                 testEntityManager.find(Author.class, 3L)
         );
-        var actualAuthors = authorRepository.findAll();
+        var actualAuthors = authorRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
 
         assertThat(actualAuthors).isNotNull().hasSize(EXPECTED_AUTHORS_COUNT)
                 .usingRecursiveFieldByFieldElementComparator()

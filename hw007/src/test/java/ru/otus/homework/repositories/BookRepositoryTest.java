@@ -7,6 +7,7 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Sort;
 import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
@@ -105,7 +106,7 @@ class BookRepositoryTest {
                 .isEqualTo(expectedBook);
     }
 
-    @DisplayName("должен возвращать ожидаемый список всех книг")
+    @DisplayName("должен возвращать ожидаемый список всех книг, отсортированный по id в возрастающем порядке")
     @Test
     void shouldReturnExpectedBooksList() {
         var expectedBooks = List.of(
@@ -113,11 +114,11 @@ class BookRepositoryTest {
                 testEntityManager.find(Book.class, 2L),
                 testEntityManager.find(Book.class, 3L)
         );
-        var actualBooks = bookRepository.findAll();
+        var actualBooks = bookRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
 
         assertThat(actualBooks).isNotNull().hasSize(EXPECTED_BOOKS_COUNT)
                 .usingRecursiveFieldByFieldElementComparator()
-                .containsExactlyInAnyOrderElementsOf(expectedBooks);
+                .containsExactlyElementsOf(expectedBooks);
     }
 
     @DisplayName("должен возвращать ожидаемый список книг определенного жанра")

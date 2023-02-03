@@ -1,6 +1,7 @@
 package ru.otus.homework.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.homework.models.Book;
@@ -82,7 +83,7 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+        return bookRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @Transactional(readOnly = true)
