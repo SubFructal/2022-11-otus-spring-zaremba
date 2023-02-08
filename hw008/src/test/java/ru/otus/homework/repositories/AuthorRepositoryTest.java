@@ -1,151 +1,114 @@
 package ru.otus.homework.repositories;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.domain.Sort;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import ru.otus.homework.models.Author;
+import ru.otus.homework.models.Book;
+import ru.otus.homework.models.Comment;
+import ru.otus.homework.models.Genre;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("AuthorRepository")
-@DataJpaTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+//@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+@DataMongoTest
 class AuthorRepositoryTest {
-//
-//    private static final int EXPECTED_AUTHORS_COUNT = 3;
-//    private static final long EXPECTED_AUTHORS_COUNT_AFTER_CLEANING = 0;
-//    private static final String NEW_AUTHOR_NAME = "Автор_04";
-//    private static final long EXISTING_AUTHOR_ID = 1;
-//    private static final String EXISTING_AUTHOR_NAME = "Автор_01";
-//    private static final String UPDATED_AUTHOR_NAME = "Автор_01_updated";
-//
-//    @Autowired
-//    private TestEntityManager testEntityManager;
-//    @Autowired
-//    private AuthorRepository authorRepository;
-//
-//    @DisplayName("должен возвращать ожидаемое количество авторов в БД")
-//    @Test
-//    void shouldReturnExpectedAuthorsCount() {
-//        var actualAuthorsCount = authorRepository.count();
-//        assertThat(actualAuthorsCount).isEqualTo(EXPECTED_AUTHORS_COUNT);
-//    }
-//
-//    @DisplayName("должен добавлять автора в БД")
-//    @Test
-//    void shouldInsertAuthor() {
-//        var expectedAuthor = new Author();
-//        expectedAuthor.setName(NEW_AUTHOR_NAME);
-//
-//        authorRepository.save(expectedAuthor);
-//        assertThat(expectedAuthor.getId()).isGreaterThan(0);
-//
-//        var actualAuthor = testEntityManager.find(Author.class, expectedAuthor.getId());
-//
-//        assertThat(actualAuthor)
-//                .isNotNull()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedAuthor);
-//
-//        assertThat(actualAuthor)
-//                .matches(author -> author.getId() == 4)
-//                .matches(author -> author.getName().equals(NEW_AUTHOR_NAME));
-//    }
-//
-//    @DisplayName("должен изменять имеющегося в БД автора без отключения объекта автора от контекста")
-//    @Test
-//    void shouldUpdateAuthor() {
-//        var author = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        author.setName(UPDATED_AUTHOR_NAME);
-//        testEntityManager.flush();
-//        var updatedAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//
-//        assertThat(updatedAuthor.getName()).isEqualTo(UPDATED_AUTHOR_NAME);
-//    }
-//
-//    @DisplayName("должен изменять имеющегося в БД автора при отключении объекта автора от контекста")
-//    @Test
-//    void shouldUpdateAuthorWithDetaching() {
-//        var author = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        testEntityManager.detach(author);
-//        author.setName(UPDATED_AUTHOR_NAME);
-//        authorRepository.save(author);
-//        var updatedAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//
-//        assertThat(updatedAuthor.getName()).isEqualTo(UPDATED_AUTHOR_NAME);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемого автора по идентификатору")
-//    @Test
-//    void shouldReturnExpectedAuthorById() {
-//        var expectedAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        var optionalActualAuthor = authorRepository.findById(EXISTING_AUTHOR_ID);
-//
-//        assertThat(optionalActualAuthor)
-//                .isPresent()
-//                .get()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedAuthor);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемого автора по имени")
-//    @Test
-//    void shouldReturnExpectedAuthorByName() {
-//        var expectedAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        var optionalActualAuthor = authorRepository.findByName(EXISTING_AUTHOR_NAME);
-//
-//        assertThat(optionalActualAuthor)
-//                .isNotEmpty()
-//                .get()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedAuthor);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемый список всех авторов, отсортированный по id в возрастающем порядке")
-//    @Test
-//    void shouldReturnExpectedAuthorsList() {
-//        var expectedAuthors = List.of(
-//                testEntityManager.find(Author.class, 1L),
-//                testEntityManager.find(Author.class, 2L),
-//                testEntityManager.find(Author.class, 3L)
-//        );
-//        var actualAuthors = authorRepository.findAll(Sort.by(Sort.Direction.ASC,"id"));
-//
-//        assertThat(actualAuthors).isNotNull().hasSize(EXPECTED_AUTHORS_COUNT)
-//                .usingRecursiveFieldByFieldElementComparator()
-//                .containsExactlyElementsOf(expectedAuthors);
-//    }
-//
-//    @DisplayName("должен удалять заданного автора по его идентификатору")
-//    @Test
-//    void shouldDeleteAuthorById() {
-//        var existingAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        assertThat(existingAuthor).isNotNull();
-//
-//        authorRepository.deleteById(EXISTING_AUTHOR_ID);
-//
-//        var deletedAuthor = testEntityManager.find(Author.class, EXISTING_AUTHOR_ID);
-//        assertThat(deletedAuthor).isNull();
-//    }
-//
-//    @DisplayName("должен удалять всех авторов из БД и возвращать количество удаленных авторов")
-//    @Test
-//    void shouldDeleteAllAuthors() {
-//        var actualCountBeforeCleaning = authorRepository.count();
-//        assertThat(actualCountBeforeCleaning).isEqualTo(EXPECTED_AUTHORS_COUNT);
-//
-//        var deletedAuthorsCount = authorRepository.deleteAllCustom();
-//
-//        assertThat(deletedAuthorsCount).isEqualTo(EXPECTED_AUTHORS_COUNT);
-//
-//        var actualCountAfterCleaning = authorRepository.count();
-//        assertThat(actualCountAfterCleaning).isEqualTo(EXPECTED_AUTHORS_COUNT_AFTER_CLEANING);
-//    }
+
+    private static final String EXISTING_AUTHOR_ID = "3";
+
+    private List<Author> authors;
+    private List<Genre> genres;
+    private List<Book> books;
+    private List<Comment> comments;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    @BeforeEach
+    void setUp() {
+        authors = mongoTemplate.findAll(Author.class);
+        genres = mongoTemplate.findAll(Genre.class);
+        books = mongoTemplate.findAll(Book.class);
+        comments = mongoTemplate.findAll(Comment.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+//        mongoTemplate.remove(new Query(), Author.class);
+//        mongoTemplate.remove(new Query(), Genre.class);
+//        mongoTemplate.remove(new Query(), Book.class);
+//        mongoTemplate.remove(new Query(), Comment.class);
+
+        mongoTemplate.getDb().drop();
+
+        mongoTemplate.insertAll(authors);
+        mongoTemplate.insertAll(genres);
+        mongoTemplate.insertAll(books);
+        mongoTemplate.insertAll(comments);
+    }
+
+    @DisplayName("должен каскадно удалять заданного автора по его идентификатору и все связанные с ним сущности")
+    @Test
+    void shouldCascadeDeleteAuthorById() {
+        var existingAuthor = mongoTemplate.findById(EXISTING_AUTHOR_ID, Author.class);
+        var existingBooks = mongoTemplate.find(
+                Query.query(Criteria.where("author").is(existingAuthor)), Book.class);
+        var existingComments = mongoTemplate.find(
+                Query.query(Criteria.where("book").in(existingBooks)), Comment.class);
+
+        assertThat(existingBooks).isNotNull().hasSize(2);
+        assertThat(existingComments).isNotNull().hasSize(3);
+
+        authorRepository.deleteByIdCustom(EXISTING_AUTHOR_ID);
+
+        var existingCommentsIds = existingComments.stream().map(Comment::getId).collect(Collectors.toList());
+        var existingBooksIds = existingBooks.stream().map(Book::getId).collect(Collectors.toList());
+
+        var deletedComments = mongoTemplate.find(
+                Query.query(Criteria.where("id").in(existingCommentsIds)), Comment.class);
+
+        var deletedBooks = mongoTemplate.find(
+                Query.query(Criteria.where("id").in(existingBooksIds)), Book.class);
+
+        var deletedAuthor = mongoTemplate.findById(EXISTING_AUTHOR_ID, Author.class);
+
+        assertThat(deletedComments).isNotNull().hasSize(0);
+        assertThat(deletedBooks).isNotNull().hasSize(0);
+        assertThat(deletedAuthor).isNull();
+    }
+
+    @DisplayName("должен каскадно удалять всех авторов и все связанные с каждым автором сущности")
+    @Test
+    void shouldCascadeDeleteForAllAuthors() {
+        var existingAuthors = mongoTemplate.findAll(Author.class);
+        var existingBooks = mongoTemplate.findAll(Book.class);
+        var existingComments = mongoTemplate.findAll(Comment.class);
+
+        assertThat(existingAuthors).isNotNull().hasSize(3);
+        assertThat(existingBooks).isNotNull().hasSize(4);
+        assertThat(existingComments).isNotNull().hasSize(5);
+
+        authorRepository.deleteAllCustom();
+
+        var deletedComments = mongoTemplate.findAll(Comment.class);
+        var deletedBooks = mongoTemplate.findAll(Book.class);
+        var deletedAuthors = mongoTemplate.findAll(Author.class);
+
+        assertThat(deletedComments).isNotNull().hasSize(0);
+        assertThat(deletedBooks).isNotNull().hasSize(0);
+        assertThat(deletedAuthors).isNotNull().hasSize(0);
+    }
 }

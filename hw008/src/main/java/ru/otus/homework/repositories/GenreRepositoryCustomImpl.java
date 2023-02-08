@@ -1,36 +1,38 @@
 package ru.otus.homework.repositories;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import ru.otus.homework.models.Book;
+import ru.otus.homework.models.Comment;
 import ru.otus.homework.models.Genre;
 
 import java.util.stream.Collectors;
 
-@Repository
 @RequiredArgsConstructor
 public class GenreRepositoryCustomImpl implements GenreRepositoryCustom {
 
-    private final BookRepository bookRepository;
-    private final CommentRepository commentRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Override
-    public void deleteCascade(Genre genre) {
-        var books = bookRepository.findAllByGenre(genre);
-        var commentsLists = books.stream()
-                .map(commentRepository::findAllByBook)
-                .collect(Collectors.toList());
+    public void deleteByIdCustom(String id) {
+        var genre = mongoTemplate.findById(id, Genre.class);
+        var books = mongoTemplate.find(Query.query(Criteria.where("genre").is(genre)), Book.class);
+        var comments = mongoTemplate.find(Query.query(Criteria.where("book").in(books)), Comment.class);
 
-        for (var commentsList : commentsLists) {
-            for (var comment : commentsList) {
-                commentRepository.deleteById(comment.getId());
-            }
-        }
-        books.forEach(book -> bookRepository.deleteById(book.getId()));
+        var commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
+        var bookIds = books.stream().map(Book::getId).collect(Collectors.toList());
+
+        mongoTemplate.remove(Query.query(Criteria.where("id").in(commentIds)), Comment.class);
+        mongoTemplate.remove(Query.query(Criteria.where("id").in(bookIds)), Book.class);
+        mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Genre.class);
     }
 
     @Override
-    public void deleteAllCascade() {
-        commentRepository.deleteAll();
-        bookRepository.deleteAll();
+    public void deleteAllCustom() {
+        mongoTemplate.remove(new Query(), Comment.class);
+        mongoTemplate.remove(new Query(), Book.class);
+        mongoTemplate.remove(new Query(), Genre.class);
     }
 }

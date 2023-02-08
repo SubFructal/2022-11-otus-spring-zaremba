@@ -55,16 +55,14 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public Author deleteAuthorById(String id) {
         var author = findAuthorById(id);
-        authorRepository.deleteCascade(author);
-        authorRepository.deleteById(id);
+        authorRepository.deleteByIdCustom(id);
         return author;
     }
 
     @Override
     public long deleteAllAuthors() {
         var authorsCount = getAuthorsCount();
-        authorRepository.deleteAllCascade();
-        authorRepository.deleteAll();
+        authorRepository.deleteAllCustom();
         return authorsCount;
     }
 }

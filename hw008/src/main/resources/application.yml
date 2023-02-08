@@ -1,22 +1,26 @@
 spring:
   data:
     mongodb:
+      database: hw008Mongo
       host: localhost
       port: 27017
-      database: hw008Mongo
 
   shell:
     interactive:
       enabled: true
-      #enabled: false
+#      enabled: false
 #  main:
 #    allow-circular-references: true
 
 mongock:
-  #runner-type: "ApplicationRunner" # default
+#  runner-type: "ApplicationRunner" # default
   runner-type: "InitializingBean"
   change-logs-scan-package:
     - ru.otus.homework.changelogs
+  mongo-db:
+    write-concern:
+      journal: false
+    read-concern: local
 
 logging:
   level:

@@ -62,7 +62,7 @@ public class InitMongoDBDataChangeLog {
     }
 
     @ChangeSet(order = "003", id = "initBook", author = "SubFructal", runAlways = true)
-    public void initTeachers(BookRepository repository){
+    public void initBooks(BookRepository repository){
         firstBook = repository.save(new Book("Война и мир", russianClassics, tolstoy));
         secondBook = repository.save(new Book("Кладбище домашних животных", horrors, king));
         thirdBook = repository.save(new Book("Угрюм-река", russianClassics, shishkov));
@@ -72,7 +72,7 @@ public class InitMongoDBDataChangeLog {
     }
 
     @ChangeSet(order = "004", id = "initComment", author = "SubFructal", runAlways = true)
-    public void initTeachers(CommentRepository repository){
+    public void initComments(CommentRepository repository){
         repository.save(new Comment("Война и мир: комментарий 1", firstBook));
         repository.save(new Comment("Война и мир: комментарий 2", firstBook));
         repository.save(new Comment("Кладбище домашних животных: комментарий 1", secondBook));

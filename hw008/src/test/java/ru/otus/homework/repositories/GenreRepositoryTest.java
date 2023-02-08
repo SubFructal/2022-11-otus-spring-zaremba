@@ -1,150 +1,114 @@
 package ru.otus.homework.repositories;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.data.domain.Sort;
+import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import ru.otus.homework.models.Author;
+import ru.otus.homework.models.Book;
+import ru.otus.homework.models.Comment;
 import ru.otus.homework.models.Genre;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("GenreRepository")
-@DataJpaTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
+//@DataMongoTest(excludeAutoConfiguration = EmbeddedMongoAutoConfiguration.class)
+@DataMongoTest
 class GenreRepositoryTest {
-//
-//    private static final int EXPECTED_GENRES_COUNT = 2;
-//    private static final long EXPECTED_GENRES_COUNT_AFTER_CLEANING = 0;
-//    private static final String NEW_GENRE_NAME = "Жанр_03";
-//    private static final long EXISTING_GENRE_ID = 1;
-//    private static final String EXISTING_GENRE_NAME = "Жанр_01";
-//    private static final String UPDATED_GENRE_NAME = "Жанр_01_updated";
-//
-//    @Autowired
-//    private TestEntityManager testEntityManager;
-//    @Autowired
-//    private GenreRepository genreRepository;
-//
-//    @DisplayName("должен возвращать ожидаемое количество жанров в БД")
-//    @Test
-//    void shouldReturnExpectedGenresCount() {
-//        var actualGenresCount = genreRepository.count();
-//        assertThat(actualGenresCount).isEqualTo(EXPECTED_GENRES_COUNT);
-//    }
-//
-//    @DisplayName("должен добавлять жанр в БД")
-//    @Test
-//    void shouldInsertGenre() {
-//        var expectedGenre = new Genre();
-//        expectedGenre.setGenreName(NEW_GENRE_NAME);
-//
-//        genreRepository.save(expectedGenre);
-//        assertThat(expectedGenre.getId()).isGreaterThan(0);
-//
-//        var actualGenre = testEntityManager.find(Genre.class, expectedGenre.getId());
-//
-//        assertThat(actualGenre)
-//                .isNotNull()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedGenre);
-//
-//        assertThat(actualGenre)
-//                .matches(genre -> genre.getId() == 3)
-//                .matches(genre -> genre.getGenreName().equals(NEW_GENRE_NAME));
-//    }
-//
-//    @DisplayName("должен изменять имеющийся в БД жанр без отключения объекта жанра от контекста")
-//    @Test
-//    void shouldUpdateGenre() {
-//        var genre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        genre.setGenreName(UPDATED_GENRE_NAME);
-//        testEntityManager.flush();
-//        var updatedGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//
-//        assertThat(updatedGenre.getGenreName()).isEqualTo(UPDATED_GENRE_NAME);
-//    }
-//
-//    @DisplayName("должен изменять имеющийся в БД жанр при отключении объекта жанра от контекста")
-//    @Test
-//    void shouldUpdateGenreWithDetaching() {
-//        var genre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        testEntityManager.detach(genre);
-//        genre.setGenreName(UPDATED_GENRE_NAME);
-//        genreRepository.save(genre);
-//        var updatedGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//
-//        assertThat(updatedGenre.getGenreName()).isEqualTo(UPDATED_GENRE_NAME);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемый жанр по идентификатору")
-//    @Test
-//    void shouldReturnExpectedGenreById() {
-//        var expectedGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        var optionalActualGenre = genreRepository.findById(EXISTING_GENRE_ID);
-//
-//        assertThat(optionalActualGenre)
-//                .isPresent()
-//                .get()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedGenre);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемый жанр по имени")
-//    @Test
-//    void shouldReturnExpectedGenreByName() {
-//        var expectedGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        var optionalActualGenre = genreRepository.findByGenreName(EXISTING_GENRE_NAME);
-//
-//        assertThat(optionalActualGenre)
-//                .isNotEmpty()
-//                .get()
-//                .usingRecursiveComparison()
-//                .isEqualTo(expectedGenre);
-//    }
-//
-//    @DisplayName("должен возвращать ожидаемый список всех жанров, отсортированный по id в возрастающем порядке")
-//    @Test
-//    void shouldReturnExpectedGenresList() {
-//        var expectedGenres = List.of(
-//                testEntityManager.find(Genre.class, 1L),
-//                testEntityManager.find(Genre.class, 2L)
-//        );
-//        var actualGenres = genreRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
-//
-//        assertThat(actualGenres).isNotNull().hasSize(EXPECTED_GENRES_COUNT)
-//                .usingRecursiveFieldByFieldElementComparator()
-//                .containsExactlyElementsOf(expectedGenres);
-//    }
-//
-//    @DisplayName("должен удалять заданный жанр по его идентификатору")
-//    @Test
-//    void shouldDeleteGenreById() {
-//        var existingGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        assertThat(existingGenre).isNotNull();
-//
-//        genreRepository.deleteById(EXISTING_GENRE_ID);
-//
-//        var deletedGenre = testEntityManager.find(Genre.class, EXISTING_GENRE_ID);
-//        assertThat(deletedGenre).isNull();
-//    }
-//
-//    @DisplayName("должен удалять все жанры из БД и возвращать количество удаленных жанров")
-//    @Test
-//    void shouldDeleteAllGenres() {
-//        var actualCountBeforeCleaning = genreRepository.count();
-//        assertThat(actualCountBeforeCleaning).isEqualTo(EXPECTED_GENRES_COUNT);
-//
-//        var deletedGenresCount = genreRepository.deleteAllCustom();
-//
-//        assertThat(deletedGenresCount).isEqualTo(EXPECTED_GENRES_COUNT);
-//
-//        var actualCountAfterCleaning = genreRepository.count();
-//        assertThat(actualCountAfterCleaning).isEqualTo(EXPECTED_GENRES_COUNT_AFTER_CLEANING);
-//    }
+
+    private static final String EXISTING_GENRE_ID = "2";
+
+    private List<Author> authors;
+    private List<Genre> genres;
+    private List<Book> books;
+    private List<Comment> comments;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @BeforeEach
+    void setUp() {
+        authors = mongoTemplate.findAll(Author.class);
+        genres = mongoTemplate.findAll(Genre.class);
+        books = mongoTemplate.findAll(Book.class);
+        comments = mongoTemplate.findAll(Comment.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+//        mongoTemplate.remove(new Query(), Author.class);
+//        mongoTemplate.remove(new Query(), Genre.class);
+//        mongoTemplate.remove(new Query(), Book.class);
+//        mongoTemplate.remove(new Query(), Comment.class);
+
+        mongoTemplate.getDb().drop();
+
+        mongoTemplate.insertAll(authors);
+        mongoTemplate.insertAll(genres);
+        mongoTemplate.insertAll(books);
+        mongoTemplate.insertAll(comments);
+    }
+
+    @DisplayName("должен каскадно удалять заданный жанр по его идентификатору и все связанные с ним сущности")
+    @Test
+    void shouldCascadeDeleteGenreById() {
+        var existingGenre = mongoTemplate.findById(EXISTING_GENRE_ID, Genre.class);
+        var existingBooks = mongoTemplate.find(
+                Query.query(Criteria.where("genre").is(existingGenre)), Book.class);
+        var existingComments = mongoTemplate.find(
+                Query.query(Criteria.where("book").in(existingBooks)), Comment.class);
+
+        assertThat(existingBooks).isNotNull().hasSize(2);
+        assertThat(existingComments).isNotNull().hasSize(2);
+
+        genreRepository.deleteByIdCustom(EXISTING_GENRE_ID);
+
+        var existingCommentsIds = existingComments.stream().map(Comment::getId).collect(Collectors.toList());
+        var existingBooksIds = existingBooks.stream().map(Book::getId).collect(Collectors.toList());
+
+        var deletedComments = mongoTemplate.find(
+                Query.query(Criteria.where("id").in(existingCommentsIds)), Comment.class);
+
+        var deletedBooks = mongoTemplate.find(
+                Query.query(Criteria.where("id").in(existingBooksIds)), Book.class);
+
+        var deletedGenre = mongoTemplate.findById(EXISTING_GENRE_ID, Genre.class);
+
+        assertThat(deletedComments).isNotNull().hasSize(0);
+        assertThat(deletedBooks).isNotNull().hasSize(0);
+        assertThat(deletedGenre).isNull();
+    }
+
+    @DisplayName("должен каскадно удалять все жанры и все связанные с каждым жанром сущности")
+    @Test
+    void shouldCascadeDeleteForAllGenres() {
+        var existingGenres = mongoTemplate.findAll(Author.class);
+        var existingBooks = mongoTemplate.findAll(Book.class);
+        var existingComments = mongoTemplate.findAll(Comment.class);
+
+        assertThat(existingGenres).isNotNull().hasSize(3);
+        assertThat(existingBooks).isNotNull().hasSize(4);
+        assertThat(existingComments).isNotNull().hasSize(5);
+
+        genreRepository.deleteAllCustom();
+
+        var deletedComments = mongoTemplate.findAll(Comment.class);
+        var deletedBooks = mongoTemplate.findAll(Book.class);
+        var deletedGenres = mongoTemplate.findAll(Genre.class);
+
+        assertThat(deletedComments).isNotNull().hasSize(0);
+        assertThat(deletedBooks).isNotNull().hasSize(0);
+        assertThat(deletedGenres).isNotNull().hasSize(0);
+    }
 }

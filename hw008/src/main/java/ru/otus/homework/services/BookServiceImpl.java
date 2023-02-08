@@ -93,16 +93,14 @@ public class BookServiceImpl implements BookService {
     @Override
     public Book deleteBookById(String id) {
         var book = findBookById(id);
-        bookRepository.deleteCascade(book);
-        bookRepository.deleteById(id);
+        bookRepository.deleteByIdCustom(id);
         return book;
     }
 
     @Override
     public long deleteAllBooks() {
         var booksCount = getBooksCount();
-        bookRepository.deleteAllCascade();
-        bookRepository.deleteAll();
+        bookRepository.deleteAllCustom();
         return booksCount;
     }
 }

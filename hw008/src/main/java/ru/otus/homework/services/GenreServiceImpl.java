@@ -55,16 +55,14 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Genre deleteGenreById(String id) {
         var genre = findGenreById(id);
-        genreRepository.deleteCascade(genre);
-        genreRepository.deleteById(id);
+        genreRepository.deleteByIdCustom(id);
         return genre;
     }
 
     @Override
     public long deleteAllGenres() {
         var genresCount = getGenresCount();
-        genreRepository.deleteAllCascade();
-        genreRepository.deleteAll();
+        genreRepository.deleteAllCustom();
         return genresCount;
     }
 }
