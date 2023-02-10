@@ -5,7 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.mongo.embedded.EmbeddedMongoAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -47,11 +46,6 @@ class GenreRepositoryTest {
 
     @AfterEach
     void tearDown() {
-//        mongoTemplate.remove(new Query(), Author.class);
-//        mongoTemplate.remove(new Query(), Genre.class);
-//        mongoTemplate.remove(new Query(), Book.class);
-//        mongoTemplate.remove(new Query(), Comment.class);
-
         mongoTemplate.getDb().drop();
 
         mongoTemplate.insertAll(authors);

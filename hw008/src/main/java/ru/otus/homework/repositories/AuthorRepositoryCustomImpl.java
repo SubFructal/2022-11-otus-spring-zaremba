@@ -1,31 +1,37 @@
 package ru.otus.homework.repositories;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Comment;
 
-import java.util.stream.Collectors;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 @RequiredArgsConstructor
 public class AuthorRepositoryCustomImpl implements AuthorRepositoryCustom {
+
+    @Data
+    private static class BookId {
+        private final String bookId;
+    }
 
     private final MongoTemplate mongoTemplate;
 
     @Override
     public void deleteByIdCustom(String id) {
-        var author = mongoTemplate.findById(id, Author.class);
-        var books = mongoTemplate.find(Query.query(Criteria.where("author").is(author)), Book.class);
-        var comments = mongoTemplate.find(Query.query(Criteria.where("book").in(books)), Comment.class);
-
-        var commentIds = comments.stream().map(Comment::getId).collect(Collectors.toList());
-        var bookIds = books.stream().map(Book::getId).collect(Collectors.toList());
-
-        mongoTemplate.remove(Query.query(Criteria.where("id").in(commentIds)), Comment.class);
-        mongoTemplate.remove(Query.query(Criteria.where("id").in(bookIds)), Book.class);
+        var aggregation = Aggregation.newAggregation(match(Criteria.where("author.id").is(id)),
+                project("id").and("id").as("bookId"));
+        mongoTemplate.aggregate(aggregation, Book.class, BookId.class)
+                .getMappedResults().forEach(
+                        bookId -> mongoTemplate.remove(
+                                Query.query(Criteria.where("book.id").is(bookId.getBookId())), Comment.class));
+        mongoTemplate.remove(Query.query(Criteria.where("author.id").is(id)), Book.class);
         mongoTemplate.remove(Query.query(Criteria.where("id").is(id)), Author.class);
     }
 
