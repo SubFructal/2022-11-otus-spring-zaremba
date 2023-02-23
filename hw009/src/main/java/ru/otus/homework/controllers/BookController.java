@@ -20,7 +20,7 @@ public class BookController {
     private final CommentService commentService;
 
     @GetMapping("/")
-    public String listPage(Model model) {
+    public String listAllBooksPage(Model model) {
         List<Book> books = bookService.getAllBooks();
         var booksCount = bookService.getBooksCount();
         model.addAttribute("books", books);
@@ -29,33 +29,33 @@ public class BookController {
     }
 
     @GetMapping("/books-by-author")
-    public String listByAuthorPage(@RequestParam(value = "name") String authorName, Model model) {
+    public String listBooksByAuthorPage(@RequestParam(value = "name") String authorName, Model model) {
         List<Book> books = bookService.findAllBooksByAuthor(authorName);
         model.addAttribute("books", books);
         return "books-by-author";
     }
 
     @GetMapping("/books-by-genre")
-    public String listByGenrePage(@RequestParam(value = "name") String genreName, Model model) {
+    public String listBooksByGenrePage(@RequestParam(value = "name") String genreName, Model model) {
         List<Book> books = bookService.findAllBooksByGenre(genreName);
         model.addAttribute("books", books);
         return "books-by-genre";
     }
 
     @GetMapping("/delete")
-    public String delete(@RequestParam(value = "id") long id) {
+    public String deleteBook(@RequestParam(value = "id") long id) {
         bookService.deleteBookById(id);
         return "redirect:/";
     }
 
     @GetMapping("/delete-all")
-    public String deleteAll() {
+    public String deleteAllBooks() {
         bookService.deleteAllBooks();
         return "redirect:/";
     }
 
     @GetMapping("/edit")
-    public String editPage(@RequestParam(value = "id") long id, Model model) {
+    public String specificBookPage(@RequestParam(value = "id") long id, Model model) {
         var book = bookService.findBookById(id);
         var comments = commentService.findAllCommentsForSpecificBook(id);
         model.addAttribute("book", book);
@@ -64,7 +64,7 @@ public class BookController {
     }
 
     @PostMapping("/edit")
-    public String edit(@RequestParam(value = "id") long id,
+    public String editBook(@RequestParam(value = "id") long id,
                        @RequestParam(value = "title") String title,
                        @RequestParam(value = "genre") String genreName,
                        @RequestParam(value = "author") String authorName) {
@@ -73,7 +73,7 @@ public class BookController {
     }
 
     @PostMapping("/add")
-    public String add(@RequestParam(value = "title") String title,
+    public String addBook(@RequestParam(value = "title") String title,
                       @RequestParam(value = "genre") String genreName,
                       @RequestParam(value = "author") String authorName) {
         bookService.addBook(title, genreName, authorName);
