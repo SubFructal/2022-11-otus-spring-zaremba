@@ -10,8 +10,11 @@ import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Comment;
 import ru.otus.homework.models.Genre;
+import ru.otus.homework.repositories.CommentRepository;
+import ru.otus.homework.services.AuthorService;
 import ru.otus.homework.services.BookService;
 import ru.otus.homework.services.CommentService;
+import ru.otus.homework.services.GenreService;
 
 import java.util.List;
 
@@ -32,6 +35,10 @@ class BookControllerTest {
     private BookService bookService;
     @MockBean
     private CommentService commentService;
+    @MockBean
+    private AuthorService authorService;
+    @MockBean
+    private GenreService genreService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,20 +46,31 @@ class BookControllerTest {
     @DisplayName("должен отображать страницу со списком всех книг и указанием количества книг")
     @Test
     void shouldDisplayListAllBooksPage() throws Exception {
+        var expectedFirstAuthor = new Author(1, "firstAuthor");
+        var expectedSecondAuthor = new Author(1, "secondAuthor");
+        var expectedFirstGenre = new Genre(1, "firstGenre");
+        var expectedSecondGenre = new Genre(1, "secondGenre");
+
         var expectedBooks = List.of(
-                new Book(1, "firstBook", new Genre(1, "firstGenre"),
-                        new Author(1, "firstAuthor")),
-                new Book(2, "secondBook", new Genre(2, "secondGenre"),
-                        new Author(2, "secondAuthor"))
+                new Book(1, "firstBook", expectedFirstGenre, expectedFirstAuthor),
+                new Book(2, "secondBook", expectedSecondGenre, expectedSecondAuthor)
         );
         given(bookService.getAllBooks()).willReturn(expectedBooks);
         given(bookService.getBooksCount()).willReturn(2L);
+        given(genreService.getAllGenres()).willReturn(List.of(expectedFirstGenre, expectedSecondGenre));
+        given(authorService.getAllAuthors()).willReturn(List.of(expectedFirstAuthor, expectedSecondAuthor));
 
         mockMvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("books"))
                 .andExpect(model().attribute("books", expectedBooks))
+                .andExpect(model().attribute("authors", List.of(expectedFirstAuthor, expectedSecondAuthor)))
+                .andExpect(model().attribute("genres", List.of(expectedFirstGenre, expectedSecondGenre)))
                 .andExpect(model().attribute("booksCount", 2L));
+        verify(bookService, times(1)).getAllBooks();
+        verify(bookService, times(1)).getBooksCount();
+        verify(genreService, times(1)).getAllGenres();
+        verify(authorService, times(1)).getAllAuthors();
     }
 
     @DisplayName("должен отображать страницу со списком всех книг одного автора")
@@ -69,6 +87,7 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("books-by-author"))
                 .andExpect(model().attribute("books", expectedBooks));
+        verify(bookService, times(1)).findAllBooksByAuthor(expectedAuthor.getName());
     }
 
     @DisplayName("должен отображать страницу со списком всех книг одного жанра")
@@ -85,6 +104,21 @@ class BookControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("books-by-genre"))
                 .andExpect(model().attribute("books", expectedBooks));
+        verify(bookService, times(1)).findAllBooksByGenre(expectedGenre.getGenreName());
+    }
+
+    @DisplayName("должен отображать страницу подтверждения удаления книги")
+    @Test
+    void shouldDisplayConfirmDeleteBookPage() throws Exception {
+        var expectedBook = new Book(1, "firstBook", new Genre(1, "firstGenre"),
+                new Author(1, "firstAuthor"));
+        given(bookService.findBookById(expectedBook.getId())).willReturn(expectedBook);
+
+        mockMvc.perform(get("/delete").param("id", Long.toString(expectedBook.getId())))
+                .andExpect(status().isOk())
+                .andExpect(view().name("confirm-delete-book"))
+                .andExpect(model().attribute("book", expectedBook));
+        verify(bookService, times(1)).findBookById(expectedBook.getId());
     }
 
     @DisplayName("должен удалить книгу по ее идентификатору и затем отобразить страницу со списком всех книг")
@@ -92,16 +126,24 @@ class BookControllerTest {
     void shouldDeleteBookByIdAndThenShouldDisplayListALLBooksPage() throws Exception {
         var expectedBook = new Book(1, "firstBook", new Genre(1, "firstGenre"),
                 new Author(1, "firstAuthor"));
-        mockMvc.perform(get("/delete").param("id", Long.toString(expectedBook.getId())))
+        mockMvc.perform(post("/delete").param("id", Long.toString(expectedBook.getId())))
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/"));
         verify(bookService, times(1)).deleteBookById(expectedBook.getId());
     }
 
+    @DisplayName("должен отображать страницу подтверждения удаления всех книг")
+    @Test
+    void shouldDisplayConfirmDeleteAllBooksPage() throws Exception {
+        mockMvc.perform(get("/delete-all"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("confirm-delete-all-books"));
+    }
+
     @DisplayName("должен удалить все книги и затем отобразить страницу со списком всех книг")
     @Test
     void shouldDeleteAllBooksAndThenShouldDisplayListAllBooksPage() throws Exception {
-        mockMvc.perform(get("/delete-all"))
+        mockMvc.perform(post("/delete-all"))
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/"));
         verify(bookService, times(1)).deleteAllBooks();
@@ -124,6 +166,8 @@ class BookControllerTest {
                 .andExpect(view().name("edit-book"))
                 .andExpect(model().attribute("book", expectedBook))
                 .andExpect(model().attribute("comments", expectedComments));
+        verify(bookService, times(1)).findBookById(expectedBook.getId());
+        verify(commentService, times(1)).findAllCommentsForSpecificBook(expectedBook.getId());
     }
 
     @DisplayName("должен изменить существующую книгу и затем отобразить страницу со списком всех книг")

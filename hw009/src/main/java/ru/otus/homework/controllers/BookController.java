@@ -6,9 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
+import ru.otus.homework.models.Genre;
+import ru.otus.homework.services.AuthorService;
 import ru.otus.homework.services.BookService;
 import ru.otus.homework.services.CommentService;
+import ru.otus.homework.services.GenreService;
 
 import java.util.List;
 
@@ -18,12 +22,18 @@ public class BookController {
 
     private final BookService bookService;
     private final CommentService commentService;
+    private final AuthorService authorService;
+    private final GenreService genreService;
 
     @GetMapping("/")
     public String listAllBooksPage(Model model) {
         List<Book> books = bookService.getAllBooks();
+        List<Author> authors = authorService.getAllAuthors();
+        List<Genre> genres = genreService.getAllGenres();
         var booksCount = bookService.getBooksCount();
         model.addAttribute("books", books);
+        model.addAttribute("authors", authors);
+        model.addAttribute("genres", genres);
         model.addAttribute("booksCount", booksCount);
         return "books";
     }
@@ -43,12 +53,24 @@ public class BookController {
     }
 
     @GetMapping("/delete")
+    public String confirmDeleteBookPage(@RequestParam(value = "id") long id, Model model) {
+        var book = bookService.findBookById(id);
+        model.addAttribute("book", book);
+        return "confirm-delete-book";
+    }
+
+    @PostMapping("/delete")
     public String deleteBook(@RequestParam(value = "id") long id) {
         bookService.deleteBookById(id);
         return "redirect:/";
     }
 
     @GetMapping("/delete-all")
+    public String confirmDeleteAllBooksPage() {
+        return "confirm-delete-all-books";
+    }
+
+    @PostMapping("/delete-all")
     public String deleteAllBooks() {
         bookService.deleteAllBooks();
         return "redirect:/";

@@ -69,12 +69,20 @@
 
     <div class="row">
         <label for="author-name-input">Имя автора:</label>
-        <input id="author-name-input" name="author" type="text" value="Имя автора"/>
+        <select id="author-name-input" name="author">
+            <option th:each="author : ${authors}" th:object="${author}">
+                <span th:text="*{name}">Имя автора</span>
+            </option>
+        </select>
     </div>
 
     <div class="row">
         <label for="genre-name-input">Жанр:</label>
-        <input id="genre-name-input" name="genre" type="text" value="Жанр"/>
+        <select id="genre-name-input" name="genre">
+            <option th:each="genre : ${genres}" th:object="${genre}">
+                <span th:text="*{genreName}">Жанр</span>
+            </option>
+        </select>
     </div>
 
     <div class="row">
@@ -111,7 +119,7 @@
             <a href="edit-book.html" th:href="@{/edit(id=*{id})}">Изменить</a>
         </td>
         <td>
-            <a href="books.html" th:href="@{/delete(id=*{id})}">Удалить</a>
+            <a href="confirm-delete-book.html" th:href="@{/delete(id=*{id})}">Удалить</a>
         </td>
     </tr>
     </tbody>
@@ -120,7 +128,7 @@
 <br/>
 
 <div class="row">
-    <a href="books.html" th:href="@{/delete-all}">
+    <a href="confirm-delete-all-books.html" th:href="@{/delete-all}">
         <button type="button">Удалить все книги</button>
     </a>
 </div>
