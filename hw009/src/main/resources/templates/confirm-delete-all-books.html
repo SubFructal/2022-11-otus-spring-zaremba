@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Подтвердить удаление всех книг</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<p>Вы действительно хотите все книги?</p>
+<form id="delete-all-form" action="confirm-delete-all-books.html" th:action="@{/delete-all}" method="post">
+    <div class="row">
+        <button type="submit">Удалить</button>
+    </div>
+</form>
+<div class="row">
+    <a href="books.html" th:href="@{/}">
+        <button type="button">На главную</button>
+    </a>
+</div>
+
+</body>
+</html>
