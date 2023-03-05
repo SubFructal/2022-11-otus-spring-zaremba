@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список всех авторов</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .authors {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .authors tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .authors td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            $.get('/api/authors').done(function (authors) {
+                authors.forEach(function (author) {
+                    $('tbody').append(`
+                    <tr>
+                        <td>${author.id}</td>
+                        <td>${author.name}</td>
+                        <td>
+                        	<a href="/books-by-author?authorName=${author.name}">Все книги автора</a>
+						</td>
+                    </tr>
+                `)
+                });
+            })
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="row">
+    <a href="books.html" th:href="@{/}">
+        <button type="button">На главную</button>
+    </a>
+</div>
+
+<h3>Авторы в БД:</h3>
+
+<table class="authors">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Имя автора</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</body>
+</html>
