@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список всех жанров</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .genres {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .genres tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .genres td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            $.get('/api/genres').done(function (genres) {
+                genres.forEach(function (genre) {
+                    $('tbody').append(`
+                    <tr>
+                        <td>${genre.id}</td>
+                        <td>${genre.name}</td>
+                        <td>
+                        	<a href="/books-by-genre?genreName=${genre.name}">Все книги жанра</a>
+						</td>
+                    </tr>
+                `)
+                });
+            })
+        });
+    </script>
+
+</head>
+<body>
+
+<div class="row">
+    <a href="books.html" th:href="@{/}">
+        <button type="button">На главную</button>
+    </a>
+</div>
+
+<h3>Жанры в БД:</h3>
+
+<table class="genres">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название жанра</th>
+        <th>Действие</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+</body>
+</html>
