@@ -23,8 +23,6 @@ import ru.otus.homework.repositories.CommentRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -121,6 +119,7 @@ class BookControllerTest {
         verify(commentRepository, times(1)).deleteAll();
     }
 
+    @DisplayName("должен выбрасывать исключение при поиске несуществующей книги")
     @Test
     void shouldReturnExpectedErrorWhenEntityNotFound() {
         given(bookRepository.findById("1")).willReturn(Mono.empty());

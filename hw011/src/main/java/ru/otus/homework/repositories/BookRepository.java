@@ -9,7 +9,7 @@ import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
 
 public interface BookRepository extends ReactiveMongoRepository<Book, String> {
-    Flux<Book> findAllByGenre(Mono<Genre> genre, Sort sort);
+    Flux<Book> findAllByGenre(Genre genre, Sort sort);
 
-    Flux<Book> findAllByAuthor(Mono<Author> author, Sort sort);
+    Flux<Book> findAllByAuthor(Author author, Sort sort);
 }
