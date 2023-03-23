@@ -19,6 +19,7 @@ import ru.otus.homework.models.Genre;
 import ru.otus.homework.repositories.AuthorRepository;
 import ru.otus.homework.repositories.BookRepository;
 import ru.otus.homework.repositories.CommentRepository;
+import ru.otus.homework.repositories.GenreRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,13 +38,15 @@ class BookControllerTest {
     private BookRepository bookRepository;
     @MockBean
     private CommentRepository commentRepository;
+    @MockBean
+    private AuthorRepository authorRepository;
+    @MockBean
+    private GenreRepository genreRepository;
 
     @Autowired
     private WebTestClient webTestClient;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    private AuthorRepository authorRepository;
 
     @DisplayName("должен возвращать корректный список всех книг")
     @Test
@@ -70,6 +73,65 @@ class BookControllerTest {
                 .expectStatus().isOk()
                 .expectBody().json(objectMapper.writeValueAsString(expectedResult));
         verify(bookRepository, times(1)).findAll(Sort.by(Sort.Direction.ASC, "id"));
+    }
+
+    @DisplayName("должен возвращать корректный список всех книг конкретного автора")
+    @Test
+    void shouldReturnCorrectBooksListForSpecificAuthor() throws Exception {
+        var expectedAuthor = new Author("1", "firstAuthor");
+        var expectedFirstGenre = new Genre("1", "firstGenre");
+        var expectedSecondGenre = new Genre("2", "secondGenre");
+        var expectedBooks = List.of(
+                new Book("1", "firstBook", expectedFirstGenre, expectedAuthor),
+                new Book("2", "secondBook", expectedSecondGenre, expectedAuthor)
+        );
+        given(authorRepository.findByName("firstAuthor"))
+                .willReturn(Mono.just(new Author("1", "firstAuthor")));
+        given(bookRepository.findAllByAuthor(new Author("1", "firstAuthor"),
+                Sort.by(Sort.Direction.ASC, "id"))).willReturn(Flux.fromIterable(expectedBooks));
+
+        List<BookDto> expectedResult = expectedBooks.stream()
+                .map(BookDto::transformDomainToDto)
+                .collect(Collectors.toList());
+
+        webTestClient.get().uri("/api/books?authorName=firstAuthor")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json(objectMapper.writeValueAsString(expectedResult));
+        verify(authorRepository, times(1)).findByName("firstAuthor");
+        verify(bookRepository, times(1))
+                .findAllByAuthor(new Author("1", "firstAuthor"), Sort.by(Sort.Direction.ASC, "id"));
+    }
+
+    @DisplayName("должен возвращать корректный список всех книг конкретного жанра")
+    @Test
+    void shouldReturnCorrectBooksListForSpecificGenre() throws Exception {
+        var expectedGenre = new Genre("1", "firstGenre");
+        var expectedFirstAuthor = new Author("1", "firstAuthor");
+        var expectedSecondAuthor = new Author("2", "secondAuthor");
+        var expectedBooks = List.of(
+                new Book("1", "firstBook", expectedGenre, expectedFirstAuthor),
+                new Book("2", "secondBook", expectedGenre, expectedSecondAuthor)
+        );
+
+        given(genreRepository.findByName("firstGenre"))
+                .willReturn(Mono.just(new Genre("1", "firstGenre")));
+        given(bookRepository.findAllByGenre(new Genre("1", "firstGenre"),
+                Sort.by(Sort.Direction.ASC, "id"))).willReturn(Flux.fromIterable(expectedBooks));
+
+        List<BookDto> expectedResult = expectedBooks.stream()
+                .map(BookDto::transformDomainToDto)
+                .collect(Collectors.toList());
+
+        webTestClient.get().uri("/api/books?genreName=firstGenre")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json(objectMapper.writeValueAsString(expectedResult));
+        verify(genreRepository, times(1)).findByName("firstGenre");
+        verify(bookRepository, times(1))
+                .findAllByGenre(new Genre("1", "firstGenre"), Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @DisplayName("должен возвращать книгу по идентификатору")
