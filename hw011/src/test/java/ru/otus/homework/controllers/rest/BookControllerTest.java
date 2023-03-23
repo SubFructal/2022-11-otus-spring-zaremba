@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -150,6 +151,73 @@ class BookControllerTest {
                 .expectStatus().isOk()
                 .expectBody().json(objectMapper.writeValueAsString(expectedResult));
         verify(bookRepository, times(1)).findById(expectedBook.getId());
+    }
+
+    @DisplayName("должен сохранять новую книгу")
+    @Test
+    void shouldCorrectSaveNewBook() throws Exception {
+        var expectedBook = new Book("1", "firstBook",
+                new Genre("1", "firstGenre"),
+                new Author("1", "firstAuthor"));
+
+        given(genreRepository.findByName("firstGenre"))
+                .willReturn(Mono.just(new Genre("1", "firstGenre")));
+        given(authorRepository.findByName("firstAuthor"))
+                .willReturn(Mono.just(new Author("1", "firstAuthor")));
+        given(bookRepository.save(
+                new Book("firstBook", new Genre("1", "firstGenre"), new Author("1", "firstAuthor"))))
+                .willReturn(Mono.just(expectedBook));
+
+        var expectedResult = BookDto.transformDomainToDto(expectedBook);
+
+        webTestClient.post().uri("/api/books")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(expectedResult)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json(objectMapper.writeValueAsString(expectedResult));
+        verify(genreRepository, times(1)).findByName("firstGenre");
+        verify(authorRepository, times(1)).findByName("firstAuthor");
+        verify(bookRepository, times(1))
+                .save(new Book("firstBook", new Genre("1", "firstGenre"),
+                        new Author("1", "firstAuthor")));
+    }
+
+    @DisplayName("должен обновлять книгу по идентификатору")
+    @Test
+    void shouldUpdateBookById() throws Exception {
+        var expectedBook = new Book("1", "firstBook",
+                new Genre("1", "firstGenre"),
+                new Author("1", "firstAuthor"));
+
+        given(genreRepository.findByName("firstGenre"))
+                .willReturn(Mono.just(new Genre("1", "firstGenre")));
+        given(authorRepository.findByName("firstAuthor"))
+                .willReturn(Mono.just(new Author("1", "firstAuthor")));
+        given(bookRepository.findById("1")).willReturn(Mono.just(new Book("1", "secondBook",
+                new Genre("2", "secondGenre"),
+                new Author("2", "secondAuthor"))));
+        given(bookRepository.save(
+                new Book("1", "firstBook", new Genre("1", "firstGenre"),
+                        new Author("1", "firstAuthor"))))
+                .willReturn(Mono.just(expectedBook));
+
+        var expectedResult = BookDto.transformDomainToDto(expectedBook);
+
+        webTestClient.put().uri("/api/books/1")
+                .header(HttpHeaders.ACCEPT, "application/json")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(expectedResult)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody().json(objectMapper.writeValueAsString(expectedResult));
+        verify(genreRepository, times(1)).findByName("firstGenre");
+        verify(authorRepository, times(1)).findByName("firstAuthor");
+        verify(bookRepository, times(1)).findById("1");
+        verify(bookRepository, times(1))
+                .save(new Book("1", "firstBook", new Genre("1", "firstGenre"),
+                        new Author("1", "firstAuthor")));
     }
 
     @DisplayName("должен удалять книгу по идентификатору")
