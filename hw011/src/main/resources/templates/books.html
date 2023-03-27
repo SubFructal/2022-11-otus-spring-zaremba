@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+
+    <title>Список всех книг</title>
+
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+
+
+    </style>
+
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            $.get('/api/books').done(function (books) {
+                books.forEach(function (book) {
+                    $('tbody').append(`
+                    <tr>
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                        <td>${book.genre}</td>
+                        <td>
+                        	<a href="/edit?bookId=${book.id}">Изменить</a>
+						</td>
+                        <td>
+                        	<button onclick = "deleteBook('${book.id}')">Удалить</button>
+						</td>
+                    </tr>
+                `)
+                });
+            })
+        });
+
+        $(function getAllAuthors() {
+            $.get('/api/authors').done(function (authors) {
+                authors.forEach(function (author) {
+                    $('#input-author').append(`
+                    	<option>${author.name}</option>
+                	`)
+                });
+            })
+        });
+
+        $(function getAllGenres() {
+            $.get('/api/genres').done(function (genres) {
+                genres.forEach(function (genre) {
+                    $('#input-genre').append(`
+                    	<option>${genre.name}</option>
+                	`)
+                });
+            })
+        });
+
+        function deleteAllBooks() {
+            fetch("/api/books", {
+                method: 'DELETE'
+            })
+                .then(() => location.reload())
+        }
+
+        function deleteBook(id) {
+            fetch("/api/books/" + id, {
+                method: 'DELETE'
+            })
+                .then(() => location.reload())
+        }
+
+        function addBook() {
+            const titleInput = document.getElementById("input-title")
+            const genreInput = document.getElementById("input-genre")
+            const authorInput = document.getElementById("input-author")
+            const book = {}
+            book.title = titleInput.value
+            book.author = authorInput.value
+            book.genre = genreInput.value
+            fetch("/api/books", {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            })
+                .then(() => location.reload())
+        }
+    </script>
+</head>
+
+<body>
+<div class="row">
+    <a href="genres.html" th:href="@{/genres}">
+        <button type="button">Все жанры</button>
+    </a>
+</div>
+
+<div class="row">
+    <a href="authors.html" th:href="@{/authors}">
+        <button type="button">Все авторы</button>
+    </a>
+</div>
+
+<h3> Добавить новую книгу:</h3>
+
+<div class="row">
+    <label for="input-title">Название:</label>
+    <input id="input-title" name="title" type="text" value="Название"/>
+</div>
+
+<div class="row">
+    <label for="input-author">Имя автора:</label>
+    <select id="input-author" name="author">
+    </select>
+</div>
+
+<div class="row">
+    <label for="input-genre">Жанр:</label>
+    <select id="input-genre" name="genre">
+    </select>
+</div>
+
+<br/>
+
+<div class="row">
+    <button type="button" onclick="addBook()">Добавить новую книгу</button>
+</div>
+
+<h3>Книги в БД:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Автор</th>
+        <th>Жанр</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<br/>
+
+<button onclick="deleteAllBooks()">Удалить все книги</button>
+
+</body>
+</html>

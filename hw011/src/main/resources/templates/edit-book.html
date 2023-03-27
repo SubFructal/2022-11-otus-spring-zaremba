@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Изменить книгу</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+
+    <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(function () {
+            const bookId = getBookIdFromUrl()
+            $.get('/api/books/' + bookId).done(function (book) {
+                $('#id').val(`${book.id}`);
+                $('#book-title').val(`${book.title}`);
+                $('#author-name').val(`${book.author}`);
+                $('#genre-name').val(`${book.genre}`);
+            });
+        });
+
+        $(function getAllAuthors() {
+            $.get('/api/authors').done(function (authors) {
+                authors.forEach(function (author) {
+                    $('#input-author').append(`
+                    	<option>${author.name}</option>
+                	`)
+                });
+            })
+        });
+
+        $(function getAllGenres() {
+            $.get('/api/genres').done(function (genres) {
+                genres.forEach(function (genre) {
+                    $('#input-genre').append(`
+                    	<option>${genre.name}</option>
+                	`)
+                });
+            })
+        });
+
+        $(function getCommentsForBook() {
+            const bookId = getBookIdFromUrl()
+            $.get('/api/books/' + bookId + '/comments').done(function (comments) {
+                comments.forEach(function (comment) {
+                    $('#book-comments').append(`
+                    	<li>${comment.commentText}</li>
+                	`)
+                });
+            })
+        });
+
+        function editBook() {
+            const dataOutputContainer = document.getElementById('dataOutputContainer')
+            const titleInput = document.getElementById("input-title")
+            const genreInput = document.getElementById("input-genre")
+            const authorInput = document.getElementById("input-author")
+            const book = {}
+            book.title = titleInput.value
+            book.author = authorInput.value
+            book.genre = genreInput.value
+            const bookId = getBookIdFromUrl()
+            fetch("/api/books/" + bookId, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(book)
+            })
+                .then(response => response.json())
+                .then(book => dataOutputContainer.innerHTML = 'Книга изменена: ' + JSON.stringify(book));
+        }
+
+        function getBookIdFromUrl() {
+            return window.location.search.replace('?bookId=', '')
+        }
+    </script>
+
+</head>
+<body>
+
+<div class="row">
+    <a href="books.html" th:href="@{/}">
+        <button type="button">На главную</button>
+    </a>
+</div>
+
+<h3> Информация о книге:</h3>
+
+<div class="row">
+    <label for="id">ID:</label>
+    <input id="id" type="text" readonly="readonly" value="1"/>
+</div>
+
+<div class="row">
+    <label for="book-title">Название:</label>
+    <input id="book-title" type="text" readonly="readonly" value="Название"/>
+</div>
+
+<div class="row">
+    <label for="author-name">Имя автора:</label>
+    <input id="author-name" type="text" readonly="readonly" value="Имя автора"/>
+</div>
+
+<div class="row">
+    <label for="genre-name">Жанр:</label>
+    <input id="genre-name" type="text" readonly="readonly" value="Жанр"/>
+</div>
+
+
+<h3>Комментарии к книге:</h3>
+<div class="row">
+    <ol id="book-comments">
+    </ol>
+</div>
+
+<br/>
+
+<h3> Изменить книгу:</h3>
+
+<div class="row">
+    <label for="input-title">Название:</label>
+    <input id="input-title" type="text" value="Название"/>
+</div>
+
+<div class="row">
+    <label for="input-author">Имя автора:</label>
+    <select id="input-author">
+    </select>
+</div>
+
+<div class="row">
+    <label for="input-genre">Жанр:</label>
+    <select id="input-genre">
+    </select>
+</div>
+
+<br/>
+
+<div class="row">
+    <button type="button" onclick="editBook()">Изменить книгу</button>
+</div>
+
+<br/>
+
+<p id="dataOutputContainer"></p>
+
+</body>
+</html>
