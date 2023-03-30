@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,6 +45,7 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @DisplayName("должен отображать страницу со списком всех книг и указанием количества книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplayListAllBooksPage() throws Exception {
         var expectedFirstAuthor = new Author(1, "firstAuthor");
@@ -73,6 +76,7 @@ class BookControllerTest {
     }
 
     @DisplayName("должен отображать страницу со списком всех книг одного автора")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplayListBooksByAuthorPage() throws Exception {
         var expectedAuthor = new Author(1, "firstAuthor");
@@ -90,6 +94,7 @@ class BookControllerTest {
     }
 
     @DisplayName("должен отображать страницу со списком всех книг одного жанра")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplayListBooksByGenrePage() throws Exception {
         var expectedGenre = new Genre(1, "firstGenre");
@@ -107,6 +112,7 @@ class BookControllerTest {
     }
 
     @DisplayName("должен отображать страницу подтверждения удаления книги")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplayConfirmDeleteBookPage() throws Exception {
         var expectedBook = new Book(1, "firstBook", new Genre(1, "firstGenre"),
@@ -121,17 +127,21 @@ class BookControllerTest {
     }
 
     @DisplayName("должен удалить книгу по ее идентификатору и затем отобразить страницу со списком всех книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldDeleteBookByIdAndThenShouldDisplayListALLBooksPage() throws Exception {
         var expectedBook = new Book(1, "firstBook", new Genre(1, "firstGenre"),
                 new Author(1, "firstAuthor"));
-        mockMvc.perform(post("/delete").param("id", Long.toString(expectedBook.getId())))
+        mockMvc.perform(post("/delete")
+                        .with(csrf())
+                        .param("id", Long.toString(expectedBook.getId())))
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/"));
         verify(bookService, times(1)).deleteBookById(expectedBook.getId());
     }
 
     @DisplayName("должен отображать страницу подтверждения удаления всех книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplayConfirmDeleteAllBooksPage() throws Exception {
         mockMvc.perform(get("/delete-all"))
@@ -140,15 +150,17 @@ class BookControllerTest {
     }
 
     @DisplayName("должен удалить все книги и затем отобразить страницу со списком всех книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldDeleteAllBooksAndThenShouldDisplayListAllBooksPage() throws Exception {
-        mockMvc.perform(post("/delete-all"))
+        mockMvc.perform(post("/delete-all").with(csrf()))
                 .andExpect(status().isFound())
                 .andExpect(view().name("redirect:/"));
         verify(bookService, times(1)).deleteAllBooks();
     }
 
     @DisplayName("должен отображать страницу со всей информацией о конкретной книге, включая комментарии")
+    @WithMockUser(username = "user")
     @Test
     void shouldDisplaySpecificBookPage() throws Exception {
         var expectedBook = new Book(1, "firstBook", new Genre(1, "firstGenre"),
@@ -170,9 +182,11 @@ class BookControllerTest {
     }
 
     @DisplayName("должен изменить существующую книгу и затем отобразить страницу со списком всех книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldEditBookAndThenShouldDisplayListAllBooksPage() throws Exception {
         mockMvc.perform(post("/edit")
+                        .with(csrf())
                         .param("id", "1")
                         .param("title", "firstBook")
                         .param("genre", "firstGenre")
@@ -184,9 +198,11 @@ class BookControllerTest {
     }
 
     @DisplayName("должен добавить новую книгу в БД и затем отобразить страницу со списком всех книг")
+    @WithMockUser(username = "user")
     @Test
     void shouldAddNewBookInDatabaseAndThenShouldDisplayListAllBooksPage() throws Exception {
         mockMvc.perform(post("/add")
+                        .with(csrf())
                         .param("title", "firstBook")
                         .param("genre", "firstGenre")
                         .param("author", "firstAuthor"))
