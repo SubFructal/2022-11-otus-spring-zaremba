@@ -29,7 +29,10 @@ public class SecurityConfiguration {
                         .antMatchers("/login").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin();
+                .formLogin()
+                .and()
+                .rememberMe().key("appSecretKey").tokenValiditySeconds(60 * 10)
+        ;
         return http.build();
     }
 
