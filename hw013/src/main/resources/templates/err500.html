@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>error500!</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+    </style>
+    <style th:inline="text">
+        h3 {
+            background: url([[@{/listmark.png}]]) no-repeat;
+            padding: 2px;
+            padding-left: 30px;
+        }
+    </style>
+</head>
+<body>
+<h3>Ой! Что-то пошло не так...(</h3>
+<p th:text="${message}">Сообщение об ошибке</p>
+<div class="row">
+    <a href="books.html" th:href="@{/}">
+        <button type="button">На главную</button>
+    </a>
+</div>
+
+</body>
+</html>
