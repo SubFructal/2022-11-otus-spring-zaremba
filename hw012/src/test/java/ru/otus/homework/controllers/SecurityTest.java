@@ -6,12 +6,14 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.homework.models.Author;
 import ru.otus.homework.models.Book;
 import ru.otus.homework.models.Genre;
+import ru.otus.homework.security.SecurityConfiguration;
 import ru.otus.homework.services.AuthorService;
 import ru.otus.homework.services.BookService;
 import ru.otus.homework.services.CommentService;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @DisplayName("SecurityTest проверяет, что ")
+@Import(SecurityConfiguration.class)
 @WebMvcTest(controllers = {AuthorController.class, GenreController.class, BookController.class})
 public class SecurityTest {
 

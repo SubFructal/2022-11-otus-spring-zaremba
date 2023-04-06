@@ -8,8 +8,9 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
 
-        System.out.printf("Главная: %n%s%n", "http://localhost:8080");
-        System.out.printf("логин: %s; пароль: %s", "user", "password");
+        System.out.printf("%nГлавная: %n%s%n", "http://localhost:8080");
+        System.out.printf("логин: %s; пароль: %s%n", "admin", "admin123");
+        System.out.printf("логин: %s; пароль: %s%n%n", "user", "user456");
 
     }
 }

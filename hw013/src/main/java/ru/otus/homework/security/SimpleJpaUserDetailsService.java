@@ -21,6 +21,6 @@ public class SimpleJpaUserDetailsService implements UserDetailsService {
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(format("Не найден пользователь с именем %s", username)));
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                AuthorityUtils.NO_AUTHORITIES);
+                AuthorityUtils.createAuthorityList(user.getRole()));
     }
 }
