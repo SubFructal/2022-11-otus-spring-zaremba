@@ -36,5 +36,5 @@ create table users
     id   bigserial primary key,
     username varchar(255) not null unique,
     password varchar(1000) not null,
-    role varchar(255)
+    authority varchar(255)
 );

@@ -36,6 +36,6 @@ values (1, 'Комментарий 1 к книге 1'),
        (6, 'Комментарий 2 к книге 6'),
        (5, 'Комментарий 2 к книге 5');
 
-insert into users(username, password, role)
+insert into users(username, password, authority)
 values ('admin', '$2a$12$4X93.l049s5yGAXb5jHp2uah9nuoYNHMahfhFmsGWODa4bLfSBwy2', 'ROLE_ADMIN'),
        ('user', '$2a$12$v2.Kaoagij3JuoW1sQsiouyCRVDEK0JnD997VKnFOIPUE3/e9zjaG', 'ROLE_USER');
