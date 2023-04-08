@@ -91,7 +91,7 @@ public class SecurityTest {
                 .andExpect(view().name("redirect:/"));
     }
 
-    @DisplayName("для анонимного пользователя возвращается код 401 (Unauthorized) при GET запросах по каждому из url-ов")
+    @DisplayName("для анонимного пользователя возвращается код 302 (Found) при GET запросах по каждому из url-ов")
     @WithAnonymousUser
     @ParameterizedTest
     @CsvSource(value = {
@@ -113,10 +113,10 @@ public class SecurityTest {
         given(bookService.findBookById(expectedBook.getId())).willReturn(expectedBook);
 
         mockMvc.perform(get(url).param(paramName, paramValue))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isFound());
     }
 
-    @DisplayName("для анонимного пользователя возвращается код 401 (Unauthorized) при POST запросах по каждому из url-ов")
+    @DisplayName("для анонимного пользователя возвращается код 302 (Found) при POST запросах по каждому из url-ов")
     @WithAnonymousUser
     @ParameterizedTest
     @CsvSource(value = {
@@ -136,6 +136,6 @@ public class SecurityTest {
                         .param(bookTitleName, bookTitleValue)
                         .param(genreName, genreValue)
                         .param(authorName, authorValue))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isFound());
     }
 }
