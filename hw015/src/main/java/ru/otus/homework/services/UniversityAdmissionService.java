@@ -6,5 +6,5 @@ import ru.otus.homework.domain.Student;
 import java.util.Collection;
 
 public interface UniversityAdmissionService {
-    Collection<Student> accept(Collection<Applicant> applicant);
+    Collection<Student> accept(Collection<Applicant> applicants);
 }
