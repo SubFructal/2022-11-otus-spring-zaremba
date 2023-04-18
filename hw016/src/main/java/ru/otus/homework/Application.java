@@ -10,7 +10,9 @@ public class Application {
 
         System.out.printf("%nГлавная: %n%s%n", "http://localhost:8080");
         System.out.printf("логин: %s; пароль: %s%n", "admin", "admin123");
-        System.out.printf("логин: %s; пароль: %s%n%n", "user", "user456");
+        System.out.printf("логин: %s; пароль: %s%n", "user", "user456");
+
+        System.out.printf("%nActuator: %n%s%n%n", "http://localhost:8080/actuator");
 
     }
 }
