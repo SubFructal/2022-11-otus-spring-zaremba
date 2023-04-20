@@ -1,0 +1,59 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+
+  sql:
+    init:
+#      mode: never
+      mode: always
+#      data-locations: data.sql
+#      schema-locations: schema.sql
+
+  jpa:
+    generate-ddl: false
+#    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+#      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+#        format_sql: true
+
+  #Работает при подключении spring-boot-starter-web
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  jmx:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+  file:
+    name: "logs/application.log"
+  pattern:
+    file: "%date %level [%thread] [%file:%line] %msg%n"
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "metrics,health,logfile,prometheus"
+  endpoint:
+    metrics:
+      enabled: true
+    health:
+      enabled: true
+      show-components: always
+      show-details: when-authorized
+      roles: "ADMIN"
+    logfile:
+      enabled: true
+    prometheus:
+      enabled: true
