@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Изменить книгу</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+<body>
+
+<form id="edit-form" action="edit-book.html" th:object="${book}" th:action="@{/edit}" th:method="post">
+
+    <div class="row">
+        <button type="submit">Сохранить</button>
+        <a href="books.html" th:href="@{/}">
+            <button type="button">На главную</button>
+        </a>
+    </div>
+
+    <h3> Информация о книге:</h3>
+
+    <div class="row">
+        <label for="id-input">ID:</label>
+        <input id="id-input" name="id" type="text" readonly="readonly" value="1" th:value="*{id}"/>
+    </div>
+
+    <div class="row">
+        <label for="book-title-input">Название:</label>
+        <input id="book-title-input" name="title" type="text" value="Название" th:value="*{title}"/>
+    </div>
+
+    <div class="row">
+        <label for="author-name-input">Имя автора:</label>
+        <input id="author-name-input" name="author" type="text" value="Имя автора" th:value="*{author.name}"/>
+    </div>
+
+    <div class="row">
+        <label for="genre-name-input">Жанр:</label>
+        <input id="genre-name-input" name="genre" type="text" value="Жанр" th:value="*{genre.genreName}"/>
+    </div>
+
+</form>
+
+<h3>Комментарии к книге:</h3>
+<div class="row">
+    <ol>
+        <li th:each="comment : ${comments}" th:object="${comment}">
+            <span th:text="*{commentText}">Комментарий</span>
+        </li>
+    </ol>
+</div>
+
+</body>
+</html>
