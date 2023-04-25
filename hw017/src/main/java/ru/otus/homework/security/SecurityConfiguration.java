@@ -21,8 +21,7 @@ public class SecurityConfiguration {
                         .antMatchers("/login").permitAll()
                         .antMatchers("/", "/authors", "/genres",
                                 "/books-by-author", "/books-by-genre").hasAnyRole("ADMIN", "USER")
-                        .antMatchers("/delete", "/delete-all", "/edit",
-                                "/add", "/h2-console").hasRole("ADMIN")
+                        .antMatchers("/delete", "/delete-all", "/edit", "/add").hasRole("ADMIN")
                 )
                 .formLogin()
                 .and()

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.otus</groupId>
-    <artifactId>hw016-spring-zaremba</artifactId>
+    <artifactId>hw017-spring-zaremba</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
@@ -73,10 +73,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
-            <scope>runtime</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -90,6 +96,9 @@
     </dependencies>
 
     <build>
+
+        <finalName>hw017-app</finalName>
+
         <plugins>
 
             <plugin>
