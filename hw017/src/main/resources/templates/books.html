@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Список всех книг</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+
+        .row {
+            margin-top: 10px;
+        }
+
+        .books {
+            border: 1px solid steelblue;
+            width: 300px;
+            border-collapse: collapse;
+        }
+
+        .books tr td, th {
+            padding: 5px;
+            border: 1px solid steelblue;
+        }
+
+        .books td:last-child, td:first-child {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="row">
+    <a href="genres.html" th:href="@{/genres}">
+        <button type="button">Все жанры</button>
+    </a>
+</div>
+<div class="row">
+    <a href="authors.html" th:href="@{/authors}">
+        <button type="button">Все авторы</button>
+    </a>
+</div>
+
+<form id="add-form" action="books.html" th:action="@{/add}" th:method="post">
+
+    <h3> Добавить новую книгу:</h3>
+
+    <div class="row">
+        <label for="book-title-input">Название:</label>
+        <input id="book-title-input" name="title" type="text" value="Название"/>
+    </div>
+
+    <div class="row">
+        <label for="author-name-input">Имя автора:</label>
+        <select id="author-name-input" name="author">
+            <option th:each="author : ${authors}" th:object="${author}">
+                <span th:text="*{name}">Имя автора</span>
+            </option>
+        </select>
+    </div>
+
+    <div class="row">
+        <label for="genre-name-input">Жанр:</label>
+        <select id="genre-name-input" name="genre">
+            <option th:each="genre : ${genres}" th:object="${genre}">
+                <span th:text="*{genreName}">Жанр</span>
+            </option>
+        </select>
+    </div>
+
+    <div class="row">
+        <button type="submit">Добавить новую книгу</button>
+    </div>
+
+</form>
+
+<br/>
+
+<span><b>Количество книг в БД:</b> </span>
+<span th:text="${booksCount}">0</span>
+
+<h3>Книги в БД:</h3>
+
+<table class="books">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Автор</th>
+        <th>Жанр</th>
+        <th>Изменить</th>
+        <th>Удалить</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="book : ${books}" th:object="${book}">
+        <td th:text="*{id}">id</td>
+        <td th:text="*{title}">Название</td>
+        <td th:text="*{author.name}">Автор</td>
+        <td th:text="*{genre.genreName}">Жанр</td>
+        <td>
+            <a href="edit-book.html" th:href="@{/edit(id=*{id})}">Изменить</a>
+        </td>
+        <td>
+            <a href="confirm-delete-book.html" th:href="@{/delete(id=*{id})}">Удалить</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<br/>
+
+<div class="row">
+    <a href="confirm-delete-all-books.html" th:href="@{/delete-all}">
+        <button type="button">Удалить все книги</button>
+    </a>
+</div>
+
+</body>
+</html>
