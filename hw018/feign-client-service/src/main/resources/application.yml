@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: feign-client-service
+
+logging:
+  level:
+    root: ERROR
+
+diff-postfix: "_from library service"
+
+hystrix:
+  command:
+    default:
+      isolation:
+        thread:
+          timeoutInMilliseconds: 3000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+#turbine:
+#  app-config: feign-client-service
+#  cluster-name-expression: new String("default")
