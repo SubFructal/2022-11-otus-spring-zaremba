@@ -4,7 +4,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.otus.client.dto.BookDto;
-import ru.otus.client.feign.LibraryServiceBookFeignClient;
+import ru.otus.client.feign.LibraryServiceFeignClient;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,10 +14,10 @@ import java.util.stream.Collectors;
 @Service
 public class BookServiceImpl implements BookService {
 
-    private final LibraryServiceBookFeignClient feignClient;
+    private final LibraryServiceFeignClient feignClient;
     private final String diffPostfix;
 
-    public BookServiceImpl(LibraryServiceBookFeignClient feignClient, @Value("${diff-postfix}") String diffPostfix) {
+    public BookServiceImpl(LibraryServiceFeignClient feignClient, @Value("${diff-postfix}") String diffPostfix) {
         this.feignClient = feignClient;
         this.diffPostfix = diffPostfix;
     }

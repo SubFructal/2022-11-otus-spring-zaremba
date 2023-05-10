@@ -13,6 +13,8 @@
     <modules>
         <module>library-service</module>
         <module>feign-client-service</module>
+        <module>discovery-server-service</module>
+        <module>hystrix-dashboard-service</module>
     </modules>
 
 </project>

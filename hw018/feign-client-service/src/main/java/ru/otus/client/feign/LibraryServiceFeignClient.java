@@ -2,12 +2,15 @@ package ru.otus.client.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import ru.otus.client.dto.AuthorDto;
 import ru.otus.client.dto.BookDto;
+import ru.otus.client.dto.CommentDto;
+import ru.otus.client.dto.GenreDto;
 
 import java.util.List;
 
-@FeignClient(name = "libraryServiceBookFeignClient", url = "http://localhost:9001")
-public interface LibraryServiceBookFeignClient {
+@FeignClient(name = "library-service")
+public interface LibraryServiceFeignClient {
 
     @GetMapping(value = "/api/books")
     List<BookDto> findAllBooks();
@@ -32,4 +35,13 @@ public interface LibraryServiceBookFeignClient {
 
     @DeleteMapping(value = "/api/books")
     long deleteAllBooks();
+
+    @GetMapping(value = "/api/books/{id}/comments")
+    List<CommentDto> findAllCommentsForSpecificBook(@PathVariable(value = "id") long id);
+
+    @GetMapping(value = "/api/authors")
+    List<AuthorDto> findAllAuthors();
+
+    @GetMapping(value = "/api/genres")
+    List<GenreDto> findAllGenres();
 }

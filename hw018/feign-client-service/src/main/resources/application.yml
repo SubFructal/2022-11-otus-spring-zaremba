@@ -5,6 +5,15 @@ spring:
   application:
     name: feign-client-service
 
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
+  instance:
+    preferIpAddress: true
+
 logging:
   level:
     root: ERROR
@@ -23,7 +32,3 @@ management:
     web:
       exposure:
         include: "*"
-
-#turbine:
-#  app-config: feign-client-service
-#  cluster-name-expression: new String("default")
