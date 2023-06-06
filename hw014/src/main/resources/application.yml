@@ -1,0 +1,44 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:hw014-h2Db
+    username: usr
+    password: pwd
+
+#  datasource:
+#    url: jdbc:postgresql://localhost:5430/demoDB
+#    username: usr
+#    password: pwd
+
+  data:
+    mongodb:
+      database: hw014-mongoDb
+      host: localhost
+#      port: 0
+      port: 27017
+
+#  mongodb:
+#    embedded:
+#      version: 3.5.5
+
+  sql:
+    init:
+      mode: always
+      data-locations: data.sql
+      schema-locations: schema.sql
+
+  batch:
+    job:
+#      enabled: true
+      enabled: false
+
+  shell:
+    interactive:
+#      enabled: false
+      enabled: true
+
+  main:
+    allow-circular-references: true
+
+logging:
+  level:
+    root: ERROR
